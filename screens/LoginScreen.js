@@ -1,33 +1,50 @@
 import React from "react";
-import { Button, View, StyleSheet, Text } from "react-native";
+import { Button, View, TextInput } from "react-native";
+import AuthContext from "../contexts/Auth"
 
-export default class LoginScreen extends React.Component {
+export default function LoginScreen({navigation}) {
+  const [username, setUsername] = React.useState('');
+  const [password, setPassword] = React.useState('');
 
-  state = {
-    userName: this.props.userName,
-  };
+  const { signIn } = React.useContext(AuthContext);
 
-  _login = (userName) => { this.setState({ userName }) };
-
-  render() {
-
-    console.log(JSON.stringify(this.props))
-
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>You are currently logged out.</Text>
-        <Button title="Press to Log In" onPress={this._login('test')}/>
-      </View>
-    );
-  }
+  return (
+    <View>
+      <TextInput
+        placeholder="Username"
+        value={username}
+        onChangeText={setUsername}
+        style={{
+          borderWidth: 1,
+          borderColor: 'black',
+          minWidth: 100,
+          marginTop: 50,
+          marginHorizontal: 20,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          borderRadius: 3,
+        }}
+      />
+      <TextInput
+        placeholder="Password"
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        style={{
+          borderWidth: 1,
+          borderColor: 'black',
+          minWidth: 100,
+          marginTop: 20,
+          marginHorizontal: 20,
+          marginVertical: 50,
+          paddingHorizontal: 10,
+          paddingVertical: 5,
+          borderRadius: 3,
+        }}
+      />
+      <Button title="Sign in" onPress={() => signIn({ username, password })} />
+    </View>
+  );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    flex: 1
-  },
-  text: {
-    textAlign: "center"
-  }
-});
+
