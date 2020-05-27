@@ -8,16 +8,18 @@ addContact = newContact => {
 };
 
 export default class AddContactScreen extends React.Component {
+
   static navigationOptions = {
     headerTitle: 'New Contact',
   };
 
   handleSubmit = formState => {
     addContact(formState);
-    navigation.navigate('ContactList');
+    this.props.navigation.navigate('ContactList');
   };
 
   render() {
+    console.log(JSON.stringify(props));
     return <AddContactForm onSubmit={this.handleSubmit} />;
   }
 }

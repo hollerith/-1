@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Text, View } from 'react-native';
+import { Button, ScrollView, Text, View } from 'react-native';
 
 export default function ContactDetailsScreen({ route, navigation }) {
   const { name } = route.params;
@@ -7,11 +7,15 @@ export default function ContactDetailsScreen({ route, navigation }) {
   const { contacts } = route.params;
 
   return (
-    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Details Screen</Text>
-      <Text>name: {JSON.stringify(name)}</Text>
-      <Text>phone: {JSON.stringify(phone)}</Text>
+    <ScrollView style={{padding: 20}}>
+      <Text style={{fontSize: 27}}>
+        { name }
+      </Text>
+      <Text style={{fontSize: 27}}>
+        { phone }
+      </Text>
+      <View style={{margin:20}} />
       <Button title="Go to Home" onPress={() => navigation.navigate('ContactList')} />
-    </View>
+    </ScrollView>
   );
 }

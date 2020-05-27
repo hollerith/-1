@@ -3,7 +3,7 @@ import { Button, Image, StatusBar, Text, TextInput, View } from "react-native";
 
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import AddContactScreen from "./AddContactScreen";
 import ContactListScreen from "./ContactListScreen";
@@ -34,6 +34,7 @@ export default function HomeScreen({ navigation }) {
   return (
     <HomeStack.Navigator
       screenOptions={{
+        headerShown: false,
         headerTitle: props => <LogoTitle {...props} />,
         headerTitleAlign: "center",
         headerStyle: {
@@ -45,10 +46,10 @@ export default function HomeScreen({ navigation }) {
         },
         headerRight: () => (
           <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-            <Item title="Add" iconName="ios-contacts" onPress={() => navigation.navigate('AddContact')} />
+            <Item title="Add" iconName="plus" onPress={() => navigation.navigate('AddContact')} />
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
-              OverflowIcon={<Icon name="ios-more" size={32} color="grey" />}
+              OverflowIcon={<Icon name="menu" size={32} color="grey" />}
             >
               <HiddenItem title="hidden1" onPress={() => alert('hidden1')} />
               <HiddenItem title="hidden2" onPress={() => alert('hidden2')} />

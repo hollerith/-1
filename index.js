@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import Icon from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
@@ -31,11 +31,12 @@ function MainTabs({ route, navigation }) {
     <BottomTab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
+          size = 32;
           let iconName;
           if (route.name === 'Home') {
-            iconName = focused ? 'ios-square' : 'ios-square-outline';
+            iconName = focused ? 'home' : 'home-outline';
           } else if (route.name === 'Settings') {
-            iconName = focused ? 'md-settings' : 'ios-beer';
+            iconName = 'tune';
           }
           return <Icon name={iconName} size={size} color={color} />;
         },
@@ -43,24 +44,12 @@ function MainTabs({ route, navigation }) {
       tabBarOptions={{
         activeTintColor: 'tomato',
         inactiveTintColor: 'gray',
-        style: { height: 64 }
+        inactiveBackgroundColor: 'lightgray',
+        style: { height: 72 }
       }}>
 
-      <BottomTab.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{
-          title: 'Contacts',
-        }}
-      />
-
-      <BottomTab.Screen
-        name="Settings"
-        component={SettingsScreen}
-        options={{
-          title: 'Settings',
-        }}
-      />
+      <BottomTab.Screen name="Home" component={HomeScreen} />
+      <BottomTab.Screen name="Settings" component={SettingsScreen} />
     </BottomTab.Navigator>
   );
 }
@@ -156,7 +145,7 @@ export default function App({ navigation }) {
                     <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
                       <OverflowMenu
                         style={{ marginHorizontal: 10 }}
-                        OverflowIcon={<Icon name="ios-more" size={32} color="grey" />}
+                        OverflowIcon={<Icon name="menu" size={32} color="grey" />}
                       >
                         <HiddenItem title="Sign up" onPress={authContext.signUp} />
                         <HiddenItem title="Sign In" onPress={authContext.signIn} />
@@ -171,7 +160,32 @@ export default function App({ navigation }) {
               <Stack.Screen 
                 name="Main" 
                 component={MainTabs} 
-                options={{ headerShown: false }}
+                options={{
+                  headerShown: true,
+                  headerTitle: props => <LogoTitle {...props} />,
+                  headerTitleAlign: "center",
+                  headerStyle: {
+                    backgroundColor: 'white',
+                  },
+                  headerTintColor: 'grey',
+                  headerTitleStyle: {
+                    fontWeight: 'bold',
+                  },
+                  headerRight: () => (
+                    <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
+                      <Item title="Add" iconName="plus" onPress={() => navigation.navigate('AddContact')} />
+                      <OverflowMenu
+                        style={{ marginHorizontal: 10 }}
+                        OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+                      >
+                        <HiddenItem title="hidden1" onPress={() => alert('hidden1')} />
+                        <HiddenItem title="hidden2" onPress={() => alert('hidden2')} />
+                        <HiddenItem title="hidden3" onPress={() => alert('hidden3')} />
+                        <HiddenItem title="Sign Out" onPress={authContext.signOut} />
+                      </OverflowMenu>
+                    </HeaderButtons>
+                  ),
+                }} 
               />
             )}
           </Stack.Navigator>

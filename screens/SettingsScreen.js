@@ -1,25 +1,21 @@
 import React from "react";
-import { Button, View, StyleSheet, Text } from "react-native";
+import { Button, ScrollView, View, StyleSheet, Text } from "react-native";
 
-import Ionicons from "react-native-vector-icons/Ionicons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-export default class SettingsScreen extends React.Component {
-  static navigationOptions = {
-    tabBarIcon: ({ focused, tintColor }) => (
-      <Ionicons
-        name={`ios-options${focused ? "" : "-outline"}`}
-        size={25}
-        color={tintColor}
+export default function SettingsScreen({ route, navigaton }) {
+  return (
+    <ScrollView style={{padding: 20}}>
+      <Text 
+          style={{fontSize: 27}}>
+          Welcome
+      </Text>
+      <View style={{margin:20}} />
+      <Button
+        title="Logout"
       />
-    )
-  };
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.text}>Settings coming soon.</Text>
-      </View>
-    );
-  }
+    </ScrollView>
+  );
 }
 
 const styles = StyleSheet.create({
