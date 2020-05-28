@@ -1,5 +1,5 @@
 import React from 'react';
-import AddContactForm from '../components';
+import AddContactForm from '../components/AddContactForm';
 
 addContact = newContact => {
   setState(prevState => ({
