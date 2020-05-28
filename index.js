@@ -54,7 +54,7 @@ function MainTabs({ route, navigation }) {
   );
 }
 
-export default function App({ navigation }) {
+export default function App() {
 
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
@@ -117,6 +117,10 @@ export default function App({ navigation }) {
     []
   );
 
+  const addContact = () => { 
+    navigation.push('AddContact') 
+  }
+
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
@@ -160,32 +164,7 @@ export default function App({ navigation }) {
               <Stack.Screen 
                 name="Main" 
                 component={MainTabs} 
-                options={{
-                  headerShown: true,
-                  headerTitle: props => <LogoTitle {...props} />,
-                  headerTitleAlign: "center",
-                  headerStyle: {
-                    backgroundColor: 'white',
-                  },
-                  headerTintColor: 'grey',
-                  headerTitleStyle: {
-                    fontWeight: 'bold',
-                  },
-                  headerRight: () => (
-                    <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
-                      <Item title="Add" iconName="plus" onPress={() => navigation.navigate('AddContact')} />
-                      <OverflowMenu
-                        style={{ marginHorizontal: 10 }}
-                        OverflowIcon={<Icon name="menu" size={32} color="grey" />}
-                      >
-                        <HiddenItem title="hidden1" onPress={() => alert('hidden1')} />
-                        <HiddenItem title="hidden2" onPress={() => alert('hidden2')} />
-                        <HiddenItem title="hidden3" onPress={() => alert('hidden3')} />
-                        <HiddenItem title="Sign Out" onPress={authContext.signOut} />
-                      </OverflowMenu>
-                    </HeaderButtons>
-                  ),
-                }} 
+                options={{ headerShown: false }} 
               />
             )}
           </Stack.Navigator>
