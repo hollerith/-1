@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Alert, Button, Image, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 import { createStackNavigator } from '@react-navigation/stack';
+import AsyncStorage from '@react-native-community/async-storage';
 
 import AuthContext from "../contexts/Auth"
 import { LogoTitle, SplashScreen } from "../components"
@@ -21,17 +22,41 @@ const IoniconsHeaderButton = (props) => (
 );
 
 function Settings({ route, navigaton }) {
-  const { signOut } = React.useContext(AuthContext);
+  const { signOut } = useContext(AuthContext);
+
+  const [state, setState] = useState({
+    name: "liveuser",
+  });
+
+  useEffect(() => {
+    (async () => {
+      AsyncStorage.getItem('name').then(value => {
+        console.log(`Retrieved ${value} from AsyncStorage`);
+        setState({ ...state, 'name' : value });
+      });
+    })();
+  }, []);
 
   return (
     <ScrollView style={{padding: 20}}>
-      <Text 
-          style={ styles.banner }>
-          Settings
+      <Text style={ styles.banner }>
+        Settings
       </Text>
+
+      <TextInput
+        style={ styles.textinput }
+        placeholder="State your name here"
+        value={state.name}
+        onChangeText={data => setState({ name: data }) }
+      />
+
       <View style={{margin:20}} />
       <Button
-        title="Logout" onPress={signOut}
+        title="Save" 
+        onPress={() => {
+          console.log(`Saving ${JSON.stringify(state.name)}`)
+          AsyncStorage.setItem('name', state.name);
+        }}
       />
     </ScrollView>
   );
@@ -70,7 +95,7 @@ export default function SettingsScreen({ navigation }) {
         ),
       }}
     >
-      <Stack.Screen name="Settings" component={Settings} options={{ title: "Settings" }} />
+      <Stack.Screen name="Settings" component={Settings} />
     </Stack.Navigator>
   );
 }
@@ -87,7 +112,7 @@ const styles = StyleSheet.create({
     color: "tomato"
   },
   textinput: {
-    fontSize: 24,
+    fontSize: 32,
     borderWidth: 1,
     borderColor: 'lightgrey',
     minWidth: 100,

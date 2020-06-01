@@ -1,24 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import AddContactForm from '../components/AddContactForm';
+import AsyncStorage from '@react-native-community/async-storage';
+import AuthContext from "../contexts/Auth"
 
-addContact = newContact => {
-  setState(prevState => ({
-    contacts: [...prevState.contacts, newContact]
-  }));
-};
+export default function AddContactScreen ({ route, navigation }){
+  const { signOut } = useContext(AuthContext);
 
-export default class AddContactScreen extends React.Component {
+  const [state, setState] = useState({
+    loadingItems: false,
+    contacts: [],
+    counter: 0,
+  });
 
-  static navigationOptions = {
-    headerTitle: 'New Contact',
-  };
+  useEffect(() => {
+    (async () => {
+      try {
+        const contacts = await AsyncStorage.getItem('Contacts');
+        console.log(`AddContactScreen ${state.counter} ${contacts}`);
+        setState({
+          loadingItems: true,
+          contacts: JSON.parse(contacts) || [],
+          counter: state.counter+1
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    })();
+  }, []);
 
-  handleSubmit = formState => {
-    addContact(formState);
+  handleSubmit = newContact => {
+    contacts = [...state.contacts, newContact]
+    AsyncStorage.setItem('Contacts', JSON.stringify(contacts));
     navigation.navigate('ContactList');
   };
 
-  render() {
-    return <AddContactForm onSubmit={this.handleSubmit} />;
-  }
+  return <AddContactForm onSubmit={ handleSubmit } />;
 }
+

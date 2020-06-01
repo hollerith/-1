@@ -4,7 +4,6 @@ import { Button, ScrollView, Text, View } from 'react-native';
 export default function ContactDetailsScreen({ route, navigation }) {
   const { name } = route.params;
   const { phone } = route.params;
-  const { contacts } = route.params;
 
   return (
     <ScrollView style={{padding: 20}}>

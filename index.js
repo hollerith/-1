@@ -1,11 +1,10 @@
 // Contacts
 import React from 'react';
 import { Button, Image, StatusBar, Text, TextInput, View } from "react-native";
-import { AsyncStorage } from "@react-native-community/async-storage";
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import AsyncStorage from '@react-native-community/async-storage'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import SettingsScreen from "./screens/SettingsScreen";
@@ -17,7 +16,7 @@ import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu, OverflowMe
 
 import AuthContext from "./contexts/Auth"
 
-const IoniconsHeaderButton = (props) => (
+const IconHeaderButton = (props) => (
   <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
 );
 
@@ -54,12 +53,21 @@ function MainTabs({ route, navigation }) {
   );
 }
 
+const getToken = async () => {
+  return await AsyncStorage.getItem("userToken");
+}
+
+const setToken = async (token) => {
+  return await AsyncStorage.setItem("userToken", token);
+}
+
 export default function App() {
 
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
         case 'RESTORE_TOKEN':
+          console.log(`Restoring state ${JSON.stringify(action)}`); 
           return {
             ...prevState,
             userToken: action.token,
@@ -92,7 +100,7 @@ export default function App() {
       let userToken;
 
       try {
-        userToken = await AsyncStorage.getItem('userToken');
+        userToken = await getToken();
       } catch (e) {
         console.log(`index.js :: Restoring token failed ${e.message}`);
       }
@@ -107,6 +115,7 @@ export default function App() {
       signIn: async data => {
         // TODO: login details
         dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        await setToken('dummy-auth-token');
       },
       signOut: () => dispatch({ type: 'SIGN_OUT' }),
       signUp: async data => {
@@ -116,10 +125,6 @@ export default function App() {
     }),
     []
   );
-
-  const addContact = () => { 
-    navigation.push('AddContact') 
-  }
 
   return (
     <AuthContext.Provider value={authContext}>
@@ -146,7 +151,7 @@ export default function App() {
                     fontWeight: 'bold',
                   },
                   headerRight: () => (
-                    <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
+                    <HeaderButtons HeaderButtonComponent={IconHeaderButton}>
                       <OverflowMenu
                         style={{ marginHorizontal: 10 }}
                         OverflowIcon={<Icon name="menu" size={32} color="grey" />}
