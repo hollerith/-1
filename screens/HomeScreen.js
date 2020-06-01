@@ -59,9 +59,9 @@ export default function HomeScreen({ navigation }) {
         ),
       }} 
     >
-      <HomeStack.Screen name="ContactList" component={ContactListScreen} />
-      <HomeStack.Screen name="ContactDetails" component={ContactDetailsScreen} />
-      <HomeStack.Screen name="AddContact" component={AddContactScreen} />
+      <HomeStack.Screen name="ContactList" component={ContactListScreen} options={{title: 'Home'}}  />
+      <HomeStack.Screen name="ContactDetails" component={ContactDetailsScreen} options={{title: 'Contacts'}} />
+      <HomeStack.Screen name="AddContact" component={AddContactScreen} options={{title: 'Add Contact'}} />
     </HomeStack.Navigator>
   );
 }

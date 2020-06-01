@@ -95,7 +95,7 @@ export default function SettingsScreen({ navigation }) {
         ),
       }}
     >
-      <Stack.Screen name="Settings" component={Settings} />
+      <Stack.Screen name="Settings" component={Settings} options={{title: 'Settings'}} />
     </Stack.Navigator>
   );
 }

@@ -29,8 +29,7 @@ export default function AddContactScreen ({ route, navigation }){
   }, []);
 
   handleSubmit = newContact => {
-    contacts = [...state.contacts, newContact]
-    AsyncStorage.setItem('Contacts', JSON.stringify(contacts));
+    AsyncStorage.setItem('Contacts', JSON.stringify([...state.contacts, newContact[0]]));
     navigation.navigate('ContactList');
   };
 
