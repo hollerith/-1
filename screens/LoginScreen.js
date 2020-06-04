@@ -1,12 +1,52 @@
-import React from "react";
+import React, { useState, useEffect, useContext } from 'react';
 import { Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
-import AuthContext from "../contexts/Auth"
+
+import { LogoTitle, SplashScreen } from "../components"
+import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu, OverflowMenuProvider } from 'react-navigation-header-buttons';
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
+const Masthead = (props) => (
+  <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
+);
+
+import { UserContext } from "../contexts/UserProvider"
 
 export default function LoginScreen({route, navigation}) {
-  const [username, setUsername] = React.useState('testuser');
-  const [password, setPassword] = React.useState('P455w0rd.');
+  const { user, menu } = useContext(UserContext);
 
-  const { signIn } = React.useContext(AuthContext);
+  const [username, setUsername] = useState('testuser');
+  const [password, setPassword] = useState('P455w0rd.');
+
+  const onPress = () => {
+    console.log(`Sign in ${username}`);
+    menu.signIn({ username, password });
+  }
+
+  const isSignout = user.isSignout;
+
+  navigation.setOptions({ 
+    title: '',
+    headerTitle: props => <LogoTitle {...props} />,
+    headerTitleAlign: "center",
+    headerStyle: {
+      backgroundColor: 'white',
+    },
+    headerTintColor: 'gray',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+    headerRight: () => (
+      <HeaderButtons HeaderButtonComponent={Masthead}>
+        <OverflowMenu
+          style={{ marginHorizontal: 10 }}
+          OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+        >
+          <HiddenItem title="Register" onPress={menu.signUp} />
+        </OverflowMenu>
+      </HeaderButtons>
+    ),
+    animationTypeForReplace: { isSignout } ? 'pop' : 'push',
+  })
 
   return (
     <ScrollView style={{padding: 20}}>
@@ -19,7 +59,7 @@ export default function LoginScreen({route, navigation}) {
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
-        style={[ styles.textinput, styles.username ]}
+        style={ styles.textinput }
       />
       <TextInput
         placeholder="Password"
@@ -28,14 +68,14 @@ export default function LoginScreen({route, navigation}) {
         secureTextEntry
         style={[styles.textinput , styles.password ]}
       />
-      <Button title="Sign in" onPress={() => signIn({ username, password })} />
+      <Button title="Sign in" onPress={ onPress } />
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   banner: {
-    fontSize: 36, 
+    fontSize: 48, 
     fontFamily: "Lobster-Regular",
     textAlign: "center",
     color: "tomato"
@@ -48,9 +88,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 3,
-  },
-  username: {
-    marginTop: 50
   },
   password: {
     marginTop: 10,

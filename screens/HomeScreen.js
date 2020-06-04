@@ -1,13 +1,15 @@
-import React from 'react';
-import { Alert, Button, Image, StatusBar, Text, TextInput, View } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import React, { useState, useEffect, useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import AuthContext from "../contexts/Auth"
+import { Alert, Button, Image, StatusBar, Text, TextInput, View } from "react-native";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+
 import AddContactScreen from "./AddContactScreen";
 import ContactListScreen from "./ContactListScreen";
 import ContactDetailsScreen from "./ContactDetailsScreen";
+
 import { LogoTitle, SplashScreen } from "../components"
+import { UserContext } from "../contexts/UserProvider"
 
 import { 
   HeaderButtons, 
@@ -18,14 +20,15 @@ import {
   OverflowMenuProvider 
 } from 'react-navigation-header-buttons';
 
-const IoniconsHeaderButton = (props) => (
+const Masthead = (props) => (
   <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
 );
 const HomeStack = createStackNavigator();
 
 export default function HomeScreen({ navigation }) {
 
-  const { signOut } = React.useContext(AuthContext);
+  const { menu } = useContext(UserContext);
+
   const onPress = () => { navigation.push('AddContact') };
 
   return (
@@ -42,7 +45,7 @@ export default function HomeScreen({ navigation }) {
           fontWeight: 'bold',
         },
         headerRight: () => (
-          <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
+          <HeaderButtons HeaderButtonComponent={Masthead}>
             <Item title="Add" iconName="plus" onPress={onPress} />
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
@@ -53,7 +56,7 @@ export default function HomeScreen({ navigation }) {
               <HiddenItem title="Delete" onPress={() => alert('Delete Contact')} />
               <HiddenItem title="Copy" onPress={() => alert('Copy Contact')} />
               <HiddenItem title="Bunco" onPress={() => alert('Bunco')} />
-              <HiddenItem title="Sign Out" onPress={signOut} />
+              <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
         ),

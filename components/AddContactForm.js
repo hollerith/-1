@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from "react";
+import AsyncStorage from '@react-native-community/async-storage';
+import { DataContext } from "../contexts/DataProvider";
+
 import {
   Button,
   KeyboardAvoidingView,
@@ -7,72 +10,74 @@ import {
   View,
 } from 'react-native';
 
-export default class AddContactForm extends React.Component {
+const AddContactForm = ({ navigation }) => {
 
-  state = {
-    name: '',
-    phone: '',
+  const { contacts, setContacts } = useContext(DataContext);
+
+  const [state, setState] = useState({
+    name: "",
+    phone: "",
     isFormValid: false,
+  });
+
+  useEffect(() => {
+    console.log(`On change state.name or state.phone ${JSON.stringify(state)}`);
+    validateForm();
+  }, [state.name, state.phone]);
+
+  const onPress = () => {
+    const newContact = { id: new Date().getTime().toString(), name: state.name, phone: state.phone };
+    setContacts({contacts: contacts.concat([newContact])});
+    AsyncStorage.setItem('Contacts', JSON.stringify([...contacts, newContact]));
+    
+    navigation.navigate('ContactList');
   };
 
-  componentDidUpdate(prevProps, prevState) {
+  const getHandler = key => val => {
+    setState({...state, [key]: val });
+  };
+
+  const validateForm = () => {
     if (
-      this.state.name !== prevState.name ||
-      this.state.phone !== prevState.phone
+      +state.phone >= 0 &&
+      state.phone.length === 10 &&
+      state.name.length > 0
     ) {
-      this.validateForm();
-    }
-  }
-
-  handleSubmit = () => {
-    this.props.onSubmit([{ name: this.state.name, phone: this.state.phone }]);
-  };
-
-  getHandler = key => val => {
-    this.setState({ [key]: val });
-  };
-
-  validateForm = () => {
-    if (
-      +this.state.phone >= 0 &&
-      this.state.phone.length === 10 &&
-      this.state.name.length > 0
-    ) {
-      this.setState({ isFormValid: true });
+      setState({...state, isFormValid: true });
     } else {
-      this.setState({ isFormValid: false });
+      setState({...state, isFormValid: false });
     }
+    return state.isFormValid
   };
 
-  render() {
+  return (
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <View style={{ padding: 20 }}>
+        <TextInput
+          style={styles.textinput}
+          value={state.name}
+          onChangeText={getHandler('name')}
+          placeholder="Name"
+        />
+        <TextInput
+          keyboardType="numeric"
+          style={styles.textinput}
+          value={state.phone}
+          onChangeText={getHandler('phone')}
+          placeholder="Phone"
+        />
+        <View style={{ margin: 20 }}/>
+        <Button
+          title="Submit"
+          onPress={onPress}
+          disabled={!state.isFormValid}
+        />
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
 
-    return (
-      <KeyboardAvoidingView behavior="padding" style={styles.container}>
-        <View style={{ padding: 20 }}>
-          <TextInput
-            style={styles.textinput}
-            value={this.state.name}
-            onChangeText={this.getHandler('name')}
-            placeholder="Name"
-          />
-          <TextInput
-            keyboardType="numeric"
-            style={styles.textinput}
-            value={this.state.phone}
-            onChangeText={this.getHandler('phone')}
-            placeholder="Phone"
-          />
-          <View style={{ margin: 20 }}/>
-          <Button
-            title="Submit"
-            onPress={this.handleSubmit}
-            disabled={!this.state.isFormValid}
-          />
-        </View>
-      </KeyboardAvoidingView>
-    );
-  }
-}
+export default AddContactForm;
 
 const styles = StyleSheet.create({
   container: {

@@ -1,38 +1,12 @@
 import React, { useState, useEffect, useContext } from 'react';
-import AddContactForm from '../components/AddContactForm';
 import AsyncStorage from '@react-native-community/async-storage';
-import AuthContext from "../contexts/Auth"
+
+import { UserContext } from "../contexts/UserProvider"
+import AddContactForm from '../components/AddContactForm';
 
 export default function AddContactScreen ({ route, navigation }){
-  const { signOut } = useContext(AuthContext);
+  const { signOut } = useContext(UserContext);
 
-  const [state, setState] = useState({
-    loadingItems: false,
-    contacts: [],
-    counter: 0,
-  });
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const contacts = await AsyncStorage.getItem('Contacts');
-        console.log(`AddContactScreen ${state.counter} ${contacts}`);
-        setState({
-          loadingItems: true,
-          contacts: JSON.parse(contacts) || [],
-          counter: state.counter+1
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-  }, []);
-
-  handleSubmit = newContact => {
-    AsyncStorage.setItem('Contacts', JSON.stringify([...state.contacts, newContact[0]]));
-    navigation.navigate('ContactList');
-  };
-
-  return <AddContactForm onSubmit={ handleSubmit } />;
+  return <AddContactForm navigation={ navigation }  />;
 }
 

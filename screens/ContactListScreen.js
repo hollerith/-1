@@ -1,43 +1,20 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Button, View, Text, StyleSheet } from 'react-native';
+import React, { useContext } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import SectionListContacts from '../components/SectionListContacts';
 import AsyncStorage from '@react-native-community/async-storage';
-import AuthContext from "../contexts/Auth"
-import contacts from '../utils/contacts';
+import { DataContext } from "../contexts/DataProvider"
 
-export default function ContactListScreen ({ route, navigation }) {
-  const { signOut } = useContext(AuthContext);
+export default function ContactListScreen ({ navigation }) {
+  const { contacts } = useContext(DataContext);
 
-  const [state, setState] = useState({
-    loadingItems: false,
-    contacts: [],
-    counter: 0,
-  });
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const contacts = await AsyncStorage.getItem('Contacts');
-        console.log(`List ${state.counter} ${contacts}`);
-        setState({
-          loadingItems: true,
-          contacts: JSON.parse(contacts) || [],
-          counter: state.counter+1
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-  }, []);
-
-  handleSelectContact = contact => {
-    navigation.push('ContactDetails', contact);
+  const handleSelectContact = contact => {
+    navigation.push('ContactDetails', { name: contact.name, phone: contact.phone });
   };
 
   return (
     <View style={styles.container}>
-      { state.contacts.length > 0 
-        ? (<SectionListContacts contacts={ state.contacts } onSelectContact={ handleSelectContact } />) 
+      { contacts.length > 0 
+        ? (<SectionListContacts contacts={ contacts } onSelectContact={ handleSelectContact } />) 
         : (<Text style={ styles.banner }>You have no friends</Text>)
       }
     </View>

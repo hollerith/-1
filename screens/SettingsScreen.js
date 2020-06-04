@@ -3,11 +3,10 @@ import { Alert, Button, Image, ScrollView, StatusBar, StyleSheet, Text, TextInpu
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 
-import AuthContext from "../contexts/Auth"
+import { UserContext } from "../contexts/UserProvider"
+
 import { LogoTitle, SplashScreen } from "../components"
-
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
 import {
   HeaderButtons,
   HeaderButton,
@@ -22,7 +21,7 @@ const IoniconsHeaderButton = (props) => (
 );
 
 function Settings({ route, navigaton }) {
-  const { signOut } = useContext(AuthContext);
+  const { signOut } = useContext(UserContext);
 
   const [state, setState] = useState({
     name: "liveuser",
@@ -66,7 +65,7 @@ const Stack = createStackNavigator();
 
 export default function SettingsScreen({ navigation }) {
 
-  const { signOut } = React.useContext(AuthContext);
+  const { menu } = useContext(UserContext);
   const onPress = () => { navigation.push('AddContact') };
 
   return (
@@ -89,7 +88,7 @@ export default function SettingsScreen({ navigation }) {
               OverflowIcon={<Icon name="menu" size={32} color="grey" />}
             >
               <HiddenItem title="Bunco" onPress={() => alert('Bunco')} />
-              <HiddenItem title="Sign Out" onPress={signOut} />
+              <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
         ),
