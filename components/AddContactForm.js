@@ -12,7 +12,7 @@ import {
 
 const AddContactForm = ({ navigation }) => {
 
-  const { contacts, setContacts } = useContext(DataContext);
+  const { addContact } = useContext(DataContext);
 
   const [state, setState] = useState({
     name: "",
@@ -27,9 +27,7 @@ const AddContactForm = ({ navigation }) => {
 
   const onPress = () => {
     const newContact = { id: new Date().getTime().toString(), name: state.name, phone: state.phone };
-    setContacts({contacts: contacts.concat([newContact])});
-    AsyncStorage.setItem('Contacts', JSON.stringify([...contacts, newContact]));
-    
+    addContact(newContact);
     navigation.navigate('ContactList');
   };
 

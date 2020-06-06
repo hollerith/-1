@@ -71,7 +71,8 @@ const UserProvider = props => {
     []
   );
 
-  const userContext = { user, menu }
+  const isSignout = user.isSignout
+  const userContext = { user, menu, isSignout }
 
   return <Provider value={ userContext }>{props.children}</Provider>;
 };

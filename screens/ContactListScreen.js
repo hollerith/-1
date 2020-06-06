@@ -8,7 +8,8 @@ export default function ContactListScreen ({ navigation }) {
   const { contacts } = useContext(DataContext);
 
   const handleSelectContact = contact => {
-    navigation.push('ContactDetails', { name: contact.name, phone: contact.phone });
+    const { id, name, phone } = contact
+    navigation.push('ContactDetails', { id, name, phone });
   };
 
   return (

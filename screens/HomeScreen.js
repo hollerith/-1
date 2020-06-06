@@ -10,6 +10,7 @@ import ContactDetailsScreen from "./ContactDetailsScreen";
 
 import { LogoTitle, SplashScreen } from "../components"
 import { UserContext } from "../contexts/UserProvider"
+import { DataContext } from "../contexts/DataProvider"
 
 import { 
   HeaderButtons, 
@@ -28,6 +29,7 @@ const HomeStack = createStackNavigator();
 export default function HomeScreen({ navigation }) {
 
   const { menu } = useContext(UserContext);
+  const { buncoSquad } = useContext(DataContext);
 
   const onPress = () => { navigation.push('AddContact') };
 
@@ -55,7 +57,7 @@ export default function HomeScreen({ navigation }) {
               <HiddenItem title="Edit" onPress={() => Alert.alert('Edit Contact')} />
               <HiddenItem title="Delete" onPress={() => alert('Delete Contact')} />
               <HiddenItem title="Copy" onPress={() => alert('Copy Contact')} />
-              <HiddenItem title="Bunco" onPress={() => alert('Bunco')} />
+              <HiddenItem title="Bunco" onPress={() => buncoSquad()} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
 
 import { LogoTitle, SplashScreen } from "../components"
-import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu, OverflowMenuProvider } from 'react-navigation-header-buttons';
+import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 const Masthead = (props) => (
