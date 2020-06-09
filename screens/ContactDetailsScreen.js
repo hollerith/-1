@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, ScrollView, Text, View } from 'react-native';
-
 import { UserContext } from "../contexts/UserProvider"
 import { DataContext } from "../contexts/DataProvider"
 
@@ -13,16 +12,43 @@ const Masthead = (props) => (
 );
 
 export default function ContactDetailsScreen({ route, navigation }) {
-  const { id, name, phone } = route.params;
+  const { id, name, phone, checked } = route.params;
   const { user, isSignout, menu } = useContext(UserContext);
-  const { deleteContact } = useContext(DataContext);
+  const { deleteContacts, callContact, smsContact } = useContext(DataContext);
 
-  const onPress = () => {
-    console.log("ContactDetailsScreen::onPress")
-    deleteContact({ id });
+  const onPressCall = () => {
+    console.log("ContactDetailsScreen::onPressCall")
+    callContact({ phone });
     navigation.navigate('ContactList')
   }
-  
+
+  const onPressText = () => {
+    console.log("ContactDetailsScreen::onPressText")
+    smsContact({ phone });
+    navigation.navigate('ContactList')
+  }
+
+  const onPressDelete = () => {
+    console.log("ContactDetailsScreen::onPressDelete")
+    deleteContacts({ id });
+    navigation.navigate('ContactList')
+  }
+
+  const onPressSignOut = () => {
+    console.log("ContactDetailsScreen::onPressSignOut")
+    menu.signOut()
+  }
+
+  const onPressHome = () => {
+    console.log("ContactDetailsScreen::onPressSignHome")
+    navigation.navigate('ContactList')
+  }
+
+  useEffect(() => {
+    console.log(`ContactDetailsScreen::On first render `);
+    console.log(`  ~> route.params -${JSON.stringify(route.params)}`);
+  }, []);
+
   navigation.setOptions({
     title: '',
     headerTitle: props => <LogoTitle {...props} />,
@@ -36,12 +62,16 @@ export default function ContactDetailsScreen({ route, navigation }) {
     },
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={Masthead}>
-         <Item title="Del" iconName="delete" onPress={onPress} />
+         <Item title="Call" iconName="phone" onPress={onPressCall} />
+         <Item title="Del" iconName="delete" onPress={onPressDelete} />
          <OverflowMenu
           style={{ marginHorizontal: 10 }}
           OverflowIcon={<Icon name="menu" size={32} color="grey" />}
         >
-          <HiddenItem title="SignOut" onPress={menu.signOut} />
+          <HiddenItem title="Call" onPress={onPressCall} />
+          <HiddenItem title="Text" onPress={onPressText} />
+          <HiddenItem title="Delete" onPress={onPressDelete} />
+          <HiddenItem title="SignOut" onPress={onPressSignOut} />
         </OverflowMenu>
       </HeaderButtons>
     ),
@@ -49,7 +79,7 @@ export default function ContactDetailsScreen({ route, navigation }) {
   })
 
   return (
-    <ScrollView style={{padding: 20}}>
+    <ScrollView style={{padding: 20, flex: 1}}>
       <Text style={{fontSize: 27}}>
         { name }
       </Text>
@@ -57,7 +87,7 @@ export default function ContactDetailsScreen({ route, navigation }) {
         { phone }
       </Text>
       <View style={{margin:20}} />
-      <Button title="Go to Home" onPress={() => navigation.navigate('ContactList')} />
+      <Button title="Go to Home" onPress={onPressHome} />
     </ScrollView>
   );
 }

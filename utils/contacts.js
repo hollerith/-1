@@ -1,4 +1,4 @@
-const NUM_CONTACTS = 10;
+const NUM_CONTACTS = 50;
 
 const firstNames = [
   'Emma',
@@ -192,7 +192,7 @@ export const compareNames = (contact1, contact2) =>
   contact1.name > contact2.name;
 
 // add keys to based on index
-const addKeys = (val, key) => ({ key, ...val });
+const addKeys = (val, id) => ({ id, ...val });
 
 // create an array of length NUM_CONTACTS and add keys
 export default Array.from({ length: NUM_CONTACTS }, createContact).map(addKeys);

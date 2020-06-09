@@ -8,7 +8,10 @@ import {
   StyleSheet,
   TextInput,
   View,
+  Platform
 } from 'react-native';
+
+const phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
 
 const AddContactForm = ({ navigation }) => {
 
@@ -36,11 +39,7 @@ const AddContactForm = ({ navigation }) => {
   };
 
   const validateForm = () => {
-    if (
-      +state.phone >= 0 &&
-      state.phone.length === 10 &&
-      state.name.length > 0
-    ) {
+    if (state.phone.match(phoneno) && state.name.length > 0) {
       setState({...state, isFormValid: true });
     } else {
       setState({...state, isFormValid: false });
@@ -49,7 +48,9 @@ const AddContactForm = ({ navigation }) => {
   };
 
   return (
-    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+    <KeyboardAvoidingView 
+      behavior={Platform.OS == "ios" ? "padding" : "height"}
+      style={styles.container}>
       <View style={{ padding: 20 }}>
         <TextInput
           style={styles.textinput}

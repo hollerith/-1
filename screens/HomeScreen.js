@@ -29,9 +29,7 @@ const HomeStack = createStackNavigator();
 export default function HomeScreen({ navigation }) {
 
   const { menu } = useContext(UserContext);
-  const { buncoSquad } = useContext(DataContext);
-
-  const onPress = () => { navigation.push('AddContact') };
+  const { buncoSquad, deleteContacts, syncData, loadData, smsContacts } = useContext(DataContext);
 
   return (
     <HomeStack.Navigator
@@ -48,16 +46,17 @@ export default function HomeScreen({ navigation }) {
         },
         headerRight: () => (
           <HeaderButtons HeaderButtonComponent={Masthead}>
-            <Item title="Add" iconName="plus" onPress={onPress} />
+            <Item title="Add" iconName="plus" onPress={() => navigation.push("AddContact")} />
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
               OverflowIcon={<Icon name="menu" size={32} color="grey" />}
             >
-              <HiddenItem title="Add" onPress={onPress} />
-              <HiddenItem title="Edit" onPress={() => Alert.alert('Edit Contact')} />
-              <HiddenItem title="Delete" onPress={() => alert('Delete Contact')} />
-              <HiddenItem title="Copy" onPress={() => alert('Copy Contact')} />
-              <HiddenItem title="Bunco" onPress={() => buncoSquad()} />
+              <HiddenItem title="Add" onPress={() => navigation.push("AddContact") }/>
+              <HiddenItem title="Load" onPress={loadData} />
+              <HiddenItem title="Sync" onPress={syncData} />
+              <HiddenItem title="Text" onPress={smsContacts} />
+              <HiddenItem title="Delete" onPress={deleteContacts} />
+              <HiddenItem title="Bunco" onPress={buncoSquad} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>

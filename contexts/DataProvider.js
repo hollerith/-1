@@ -1,7 +1,10 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import {Alert, Linking, PermissionsAndroid} from 'react-native'
 import PropTypes from "prop-types";
 import AsyncStorage from '@react-native-community/async-storage'
 import { UserContext } from "../contexts/UserProvider"
+import testdata from "../utils/contacts"
+import Contacts from 'react-native-contacts';
 
 const DataContext = createContext();
 const { Provider } = DataContext;
@@ -14,25 +17,8 @@ const DataProvider = props => {
 
   // re-renders
   useEffect(() => {
-    console.log(`On every render `);
+    //console.log(`On every render `);
   });
-
-  // global state changed
-  useEffect(() => {
-    console.log(`On change contacts`);
-  }, [contacts]);
-
-  useEffect(() => {
-    console.log(`On change isLoading`);
-    (async () => {
-      try {
-        const data = await AsyncStorage.getItem('Contacts');
-        setContacts(JSON.parse(data) || []);
-      } catch (err) {
-        console.log(err);
-      }
-    })();
-  }, [isLoading]);
 
   // Runs once!
   useEffect(() => {
@@ -46,11 +32,96 @@ const DataProvider = props => {
     })();
   }, []);
 
+  // isLoading 
+  useEffect(() => {
+    console.log(`On change isLoading`);
+    (async () => {
+      try {
+        const data = await AsyncStorage.getItem('Contacts');
+        if (data !== JSON.stringify(contacts)){
+          console.log(` ~> loading...`);    
+          setContacts(JSON.parse(data) || []);
+        }
+        //console.log(`DataContext::contacts \n ${JSON.stringify(contacts, null, 4)}`);
+      } catch (err) {
+        console.log(`Onchange isLoading error \n ~> ${err.message}`);
+      }
+    })();
+  }, [isLoading]);
+
+  // contacts
+  useEffect(() => {
+    //console.log(`On change contacts`);
+    //console.log(`DataContext::contacts \n ${JSON.stringify(contacts, null, 4)}`);
+  }, [contacts]);
+
+  const merged = (contacts, update) => { 
+    return [...contacts.filter(item => item.id !== update.id), update] 
+  }
+
   const buncoSquad = async () => {
     console.log('DataContext::buncoSquad');
     setContacts([])
     const status = await AsyncStorage.clear();
     setLoading(!isLoading);
+  }
+ 
+  const syncData = () => {
+    console.log('DataContext::syncData');
+    PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+      {
+        'title': 'Contacts',
+        'message': 'This app would like to view your contacts.',
+        'buttonPositive': 'Please accept bare mortal'
+      }
+    ).then(() => {
+      Contacts.getAll((err, incoming) => {
+        if (err === 'denied'){
+          // error
+          console.log(`${err.message}`)
+        } else {
+          // contacts returned in Array
+          console.log(`${JSON.stringify(incoming, null, 4)}`)
+          let newContacts = []
+          incoming.forEach((ct) => {
+            console.log(`id:  name: ${ct.givenName}, phone: ${ct.phoneNumbers[0].number}`)
+            newContacts.push({id: new Date().getTime().toString(), name: ct.givenName, phone: ct.phoneNumbers[0].number})
+          })
+          console.log(`new synced ${JSON.stringify([...contacts, ...newContacts], null, 4)}`)
+          AsyncStorage.setItem("Contacts", JSON.stringify([...contacts, ...newContacts]))
+          setLoading(!isLoading)
+        }
+      })
+    })
+  }
+
+  const loadData = async () => {
+    console.log('DataContext::loadData');
+    setContacts(testdata)
+    const status = await AsyncStorage.setItem("Contacts", JSON.stringify(testdata));
+    setLoading(!isLoading);
+  }
+
+  const checkContact = (contact) => {
+    console.log('DataContext::checkContact');
+    console.log(`  ~>checked - ${JSON.stringify(contact.checked)}`);
+    if (contact.checked) {
+      setContacts(merged(contacts, {id: contact.id, name: contact.name, phone: contact.phone }))
+    } else {
+      setContacts(merged(contacts, {id: contact.id, name: contact.name, phone: contact.phone, checked: true }))
+    }
+  }
+
+  const callContact = (contact) => {
+    console.log('DataContext::callContact');
+    Linking.openURL(`tel:${contact.phone}`)
+  }
+
+  const smsContacts = (contact) => {
+    console.log('DataContext::smsContact');
+    const where = contact ? [contact.phone] : contacts.filter(i => i.checked ).map(i => i.phone)
+    Linking.openURL(`sms:${where.toString()}${Platform.OS === "ios" ? "&" : "?"}body=${":)"}`)
   }
 
   const addContact = async (contact) => {
@@ -59,24 +130,41 @@ const DataProvider = props => {
     setLoading(!isLoading);
   }
 
-  const deleteContact = async (contact) => {
-    console.log('DataContext::deleteContact');
-    await AsyncStorage.setItem("Contacts", 
-      JSON.stringify( 
-        contacts.filter((item) => { 
-          return item.id !== contact.id 
-        })
-      )
+  const deleteContacts = (contact) => {
+    console.log('DataContext::deleteContacts');
+    const where = contact ? [contact.id] : contacts.filter(i => i.checked ).map(i => i.id)
+    Alert.alert('Delete Warning',`All selected items (${where.length}) will be removed.`,
+      [
+        { 
+          text: 'OK', 
+          onPress: () => {
+            const Contacts = JSON.stringify( contacts.filter((item) => { return where.indexOf(item.id) == -1 }))
+            console.log(` ~>Where - ${JSON.stringify(where)} from ${contacts.length} to ${JSON.parse(Contacts).length}`);
+            AsyncStorage.setItem("Contacts", Contacts)  
+            setLoading(!isLoading);
+          }
+        },
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel'
+        }
+      ],
+      { cancelable: false }
     );
-    setLoading(!isLoading);
   }
 
   contactsContext = {
     contacts,
     setContacts,
     addContact,
-    deleteContact,
+    callContact,
+    smsContacts,
+    deleteContacts,
+    checkContact,
     buncoSquad,
+    loadData,
+    syncData,
   }
   
   return <Provider value={ contactsContext }>{props.children}</Provider>;

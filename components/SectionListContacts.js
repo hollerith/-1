@@ -26,7 +26,10 @@ const SectionListContacts = props => {
     <SectionList
       keyExtractor={item => item.phone}
       sections={sections}
-      renderItem={({ item }) => <Row {...item} onSelectContact={props.onSelectContact} /> }
+      renderItem={({ item }) => <Row {...item} 
+        onCheckContact={props.onCheckContact} 
+        onSelectContact={props.onSelectContact} 
+      /> }
       renderSectionHeader={renderSectionHeader}
     />
   );
@@ -42,6 +45,8 @@ const styles = StyleSheet.create({
   title: {
     flex: 1,
     textAlign: "center",
-    fontSize: 32
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "tomato"
   },
 });
