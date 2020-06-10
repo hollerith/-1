@@ -21,6 +21,14 @@ const UserProvider = props => {
             ...prevState,
             isSignout: false,
             userToken: action.token,
+            username: action.username,
+          };
+        case 'SIGN_UP':
+          return {
+            ...prevState,
+            isSignout: true,
+            userToken: null,
+            username: action.username,
           };
         case 'SIGN_OUT':
           return {
@@ -56,9 +64,13 @@ const UserProvider = props => {
   const menu = useMemo(
     () => ({
       signIn: async (data) => {
-        // TODO: login details
-        await AsyncStorage.setItem("userToken", "dummy-auth-token");
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        // TODO: validate login details
+        const login = await AsyncStorage.getItem('username')
+        console.log(`Login : ${login}`)
+        if (login == data.username) {
+          await AsyncStorage.setItem("userToken", "dummy-auth-token");
+          dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', username: login });
+        }
       },
       signOut: async () => {
         await AsyncStorage.removeItem("userToken");
@@ -66,7 +78,8 @@ const UserProvider = props => {
       },
       signUp: async data => {
         // TODO: create account
-        dispatch({ type: 'SIGN_UP', token: 'dummy-auth-token' });
+        dispatch({ type: 'SIGN_UP', username: data.username });
+        await AsyncStorage.setItem("username", data.username);
       },
     }),
     []

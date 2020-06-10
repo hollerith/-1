@@ -25,58 +25,39 @@ const MastHead = (props) => (
 function Settings({ route, navigaton }) {
   const { user, menu } = useContext(UserContext);
 
-  const [state, setState] = useState({
-    phone: "07738170000",
-    voicemail: "911",
-    username: user.username
-  })
-
   const [phone, setPhone] = useState({ phone: "07738170000" })
   const [voicemail, setVoiceMail] = useState({ voicemail: "07738172222" })
-  const [username, setUsername] = useState({ ...user })
 
   useEffect(() => {
-// (async () => {
+    (async () => {
 
-      console.log(`\n\x1b[35m${JSON.stringify(user, null, 4)} \x1b[0m`)
-      AsyncStorage.getItem('name').then(name => {
-        console.log(`Retrieved ${name} from AsyncStorage`);
-        setState({ ...state, username: name})
-        console.log(`\n\x1b[32m${JSON.stringify(user, null, 4)} \x1b[0m`)
+      const granted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE, {
+        'title': 'Permissions to read phone number',
+        'message': 'This app would like to read phone state.',
+        'buttonPositive': 'Allow'
       })
 
-      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
-        {
-          'title': 'Contacts',
-          'message': 'This app would like to view your number.',
-          'buttonPositive': 'Please accept bare mortal'
+      if (granted) {
+        // Show own phone number
+        const phoneNumber = await SendIntentAndroid.getPhoneNumber()
+        if (!phoneNumber) {
+          return console.error("Can`t get phoneNumber");
+        } else {
+          console.log(`Read phone state : phone ${phoneNumber}`)
+          setPhone(phoneNumber)
         }
-      ).then(() => {
 
         // Show voicemail number
-        SendIntentAndroid.getVoiceMailNumber().then(voiceMailNumber => {
-          if (!voiceMailNumber) {
-            return console.error("Can`t get voiceMailNumber");
-          }
+        const voiceMailNumber = await SendIntentAndroid.getVoiceMailNumber()
+        if (!voiceMailNumber) {
+          return console.error("Can`t get voiceMailNumber");
+        } else {
           console.log(`Read phone state : voicemail ${voiceMailNumber}`)
-          return voiceMailNumber
-        }).then((voiceMailNumber) => {
+          setVoiceMail(voiceMailNumber)
+        }
+      }
 
-          // Show own phone number
-          SendIntentAndroid.getPhoneNumber().then(phoneNumber => {
-            if (!phoneNumber) {
-              return console.error("Can`t get phoneNumber");
-            }
-            console.log(`Read phone state : phone ${phoneNumber}`)
-            setState({ ...state, phone: phoneNumber, voicemail, voiceMailNumber })
-          });
-
-        })
-
-
-      })
-
-//  })();
+    })();
   }, []);
 
   return (
@@ -85,14 +66,16 @@ function Settings({ route, navigaton }) {
         Settings
       </Text>
 
+      <Text style={[ styles.textinput, styles.text] }>{ user.username }</Text>
+
       <View style={{margin:10}} />
       <Button
-        title={`Share ${state.phone}`}
+        title={`Share ${phone}`}
         onPress={() => {
-          console.log(`Share ${state.phone}`)
+          console.log(`Share ${phone}`)
           SendIntentAndroid.sendText({
             title: "Share phone details",
-            text: `${state.username}'s burner ${state.phone}.`,
+            text: `${user.username}'s burner ${phone}.`,
             type: SendIntentAndroid.TEXT_PLAIN,
           });
         }}
@@ -100,29 +83,14 @@ function Settings({ route, navigaton }) {
 
       <View style={{margin:10}} />
       <Button
-        title={ `Call voicemail ${state.voicemail}` }
+        title={ `Call voicemail ${voicemail}` }
         onPress={() => {
-          console.log(state.voicemail)
-          SendIntentAndroid.sendPhoneCall(state.voicemail);
+          console.log(voicemail)
+          SendIntentAndroid.sendPhoneCall(voicemail);
         }}
       />
       <View style={{margin:20}} />
 
-      <TextInput
-        style={ styles.textinput }
-        placeholder="Your name here"
-        value={state.username}
-        onChangeText={data => setState({ ...state, username: data }) }
-      />
-
-      <View style={{margin:20}} />
-      <Button
-        title="Save" 
-        onPress={() => {
-          console.log(`Saving ${state.username}`)
-          AsyncStorage.setItem('name', state.username);
-        }}
-      />
     </ScrollView>
   );
 }

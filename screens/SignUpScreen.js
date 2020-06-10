@@ -14,12 +14,13 @@ import { UserContext } from "../contexts/UserProvider"
 export default function LoginScreen({route, navigation}) {
   const { user, menu } = useContext(UserContext);
 
-  const [username, setUsername] = useState(user.username);
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState('P455w0rd.');
 
   const onPress = () => {
-    console.log(`Sign in ${username}`);
-    menu.signIn({ username, password });
+    console.log(`Sign up with ${username}`);
+    menu.signUp({ username, password });
+    navigation.navigate('SignIn')
   }
 
   const isSignout = user.isSignout;
@@ -41,7 +42,7 @@ export default function LoginScreen({route, navigation}) {
           style={{ marginHorizontal: 10 }}
           OverflowIcon={<Icon name="menu" size={32} color="grey" />}
         >
-          <HiddenItem title="Register" onPress={() => navigation.navigate('SignUp')} />
+          <HiddenItem title="Sign In" onPress={() => navigation.navigate('LoginScreen')} />
         </OverflowMenu>
       </HeaderButtons>
     ),
@@ -52,7 +53,7 @@ export default function LoginScreen({route, navigation}) {
     <ScrollView style={{padding: 20}}>
       <Text 
           style={ styles.banner }>
-          Welcome
+          Register
       </Text>
       <View style={{margin:20}} />
       <TextInput
@@ -68,7 +69,7 @@ export default function LoginScreen({route, navigation}) {
         secureTextEntry
         style={[styles.textinput , styles.password ]}
       />
-      <Button title="Sign in" onPress={ onPress } />
+      <Button title="Sign Up" onPress={ onPress } />
     </ScrollView>
   );
 }

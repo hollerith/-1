@@ -7,6 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
+import SignUpScreen from "./screens/SignUpScreen";
 import HomeScreen from "./screens/HomeScreen";
 
 import AsyncStorage from '@react-native-community/async-storage'
@@ -67,10 +68,7 @@ function Main({ route, navigation }){
         <Stack.Screen name="Splash" component={SplashScreen} />
       ) : user.userToken == null ? (
         // No token found, user isn't signed in
-        <Stack.Screen
-          name="SignIn"
-          component={ LoginScreen }
-        />
+        <Stack.Screen name="SignIn" component={ LoginScreen } />
       ) : (
         // User is signed in
         <Stack.Screen 
@@ -79,6 +77,7 @@ function Main({ route, navigation }){
           options={{ headerShown: false }}
         />
       )}
+      <Stack.Screen name="SignUp" component={ SignUpScreen } />
     </Stack.Navigator>
   )
 }
