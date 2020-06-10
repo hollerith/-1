@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, ScrollView, Text, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { UserContext } from "../contexts/UserProvider"
 import { DataContext } from "../contexts/DataProvider"
 
@@ -14,7 +14,8 @@ const Masthead = (props) => (
 export default function ContactDetailsScreen({ route, navigation }) {
   const { id, name, phone, checked } = route.params;
   const { user, isSignout, menu } = useContext(UserContext);
-  const { deleteContacts, callContact, smsContact } = useContext(DataContext);
+  const { deleteContacts, saveContact, callContact, smsContact } = useContext(DataContext);
+  const [state, setState] = useState({ name: name, phone: phone})
 
   const onPressCall = () => {
     console.log("ContactDetailsScreen::onPressCall")
@@ -39,8 +40,9 @@ export default function ContactDetailsScreen({ route, navigation }) {
     menu.signOut()
   }
 
-  const onPressHome = () => {
-    console.log("ContactDetailsScreen::onPressSignHome")
+  const onPressSave = () => {
+    console.log("ContactDetailsScreen::onPressSave")
+    saveContact({ id: id, name: state.name, phone: state.phone})
     navigation.navigate('ContactList')
   }
 
@@ -80,14 +82,46 @@ export default function ContactDetailsScreen({ route, navigation }) {
 
   return (
     <ScrollView style={{padding: 20, flex: 1}}>
-      <Text style={{fontSize: 27}}>
-        { name }
-      </Text>
-      <Text style={{fontSize: 27}}>
-        { phone }
-      </Text>
+      <TextInput
+        style={ styles.textinput }
+        value={state.name}
+        onChangeText={data => setState({...state, name: data }) }
+      />
+      <TextInput
+        style={ styles.textinput }
+        value={state.phone}
+        onChangeText={data => setState({...state, phone: data }) }
+      />
       <View style={{margin:20}} />
-      <Button title="Go to Home" onPress={onPressHome} />
+      <Button title="Save" onPress={onPressSave} />
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    justifyContent: "center",
+    flex: 1
+  },
+  banner: {
+    fontSize: 36,
+    fontFamily: "Lobster-Regular",
+    textAlign: "center",
+    color: "tomato"
+  },
+  textinput: {
+    fontSize: 24,
+    borderWidth: 1,
+    borderColor: 'lightgrey',
+    minWidth: 100,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginVertical: 10,
+    borderRadius: 3,
+  },
+  text: {
+    textAlign: "center"
+  }
+});
+
+

@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import { UserContext } from "../contexts/UserProvider"
 import testdata from "../utils/contacts"
 import Contacts from 'react-native-contacts';
+import SendIntentAndroid from 'react-native-send-intent'
 
 const DataContext = createContext();
 const { Provider } = DataContext;
@@ -55,10 +56,7 @@ const DataProvider = props => {
     //console.log(`DataContext::contacts \n ${JSON.stringify(contacts, null, 4)}`);
   }, [contacts]);
 
-  const merged = (contacts, update) => { 
-    return [...contacts.filter(item => item.id !== update.id), update] 
-  }
-
+  // GLOBAL MENU ACTIONS
   const buncoSquad = async () => {
     console.log('DataContext::buncoSquad');
     setContacts([])
@@ -103,6 +101,10 @@ const DataProvider = props => {
     setLoading(!isLoading);
   }
 
+  const merged = (contacts, contact) => { 
+    return [...contacts.filter(item => item.id !== contact.id), contact] 
+  }
+
   const checkContact = (contact) => {
     console.log('DataContext::checkContact');
     console.log(`  ~>checked - ${JSON.stringify(contact.checked)}`);
@@ -111,6 +113,17 @@ const DataProvider = props => {
     } else {
       setContacts(merged(contacts, {id: contact.id, name: contact.name, phone: contact.phone, checked: true }))
     }
+  }
+
+  const saveContact = (contact) => {
+    console.log(`DataContext::saveContact:::${contact.name}`);
+    AsyncStorage.setItem('Contacts', JSON.stringify([...contacts.filter(item => item.id !== contact.id), contact]));
+    setLoading(!isLoading)
+  }
+
+  const reloadContacts = () => {
+    console.log('DataContext::clearContacts');
+    setLoading(!isLoading)
   }
 
   const callContact = (contact) => {
@@ -122,6 +135,15 @@ const DataProvider = props => {
     console.log('DataContext::smsContact');
     const where = contact ? [contact.phone] : contacts.filter(i => i.checked ).map(i => i.phone)
     Linking.openURL(`sms:${where.toString()}${Platform.OS === "ios" ? "&" : "?"}body=${":)"}`)
+  }
+
+  const msgContact = (contact) => {
+    console.log('DataContext::smsContact');
+    SendIntentAndroid.sendText({
+      title: "Please share this text",
+      text: "Lorem ipsum dolor sit amet, per error erant eu, antiopam intellegebat ne sed",
+      type: SendIntentAndroid.TEXT_PLAIN,
+    });
   }
 
   const addContact = async (contact) => {
@@ -158,10 +180,13 @@ const DataProvider = props => {
     contacts,
     setContacts,
     addContact,
+    msgContact,
     callContact,
     smsContacts,
+    reloadContacts,
     deleteContacts,
     checkContact,
+    saveContact,
     buncoSquad,
     loadData,
     syncData,

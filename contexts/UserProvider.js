@@ -34,6 +34,7 @@ const UserProvider = props => {
       isLoading: true,
       isSignout: false,
       userToken: null,
+      username: "",
     }
   );
 

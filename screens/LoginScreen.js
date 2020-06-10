@@ -14,7 +14,7 @@ import { UserContext } from "../contexts/UserProvider"
 export default function LoginScreen({route, navigation}) {
   const { user, menu } = useContext(UserContext);
 
-  const [username, setUsername] = useState('testuser');
+  const [username, setUsername] = useState(user.username);
   const [password, setPassword] = useState('P455w0rd.');
 
   const onPress = () => {

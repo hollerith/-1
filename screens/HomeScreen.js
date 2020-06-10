@@ -29,7 +29,15 @@ const HomeStack = createStackNavigator();
 export default function HomeScreen({ navigation }) {
 
   const { menu } = useContext(UserContext);
-  const { buncoSquad, deleteContacts, syncData, loadData, smsContacts } = useContext(DataContext);
+  const { 
+    buncoSquad, 
+    reloadContacts,
+    deleteContacts, 
+    syncData, 
+    loadData, 
+    smsContacts, 
+    msgContact 
+  } = useContext(DataContext);
 
   return (
     <HomeStack.Navigator
@@ -52,10 +60,12 @@ export default function HomeScreen({ navigation }) {
               OverflowIcon={<Icon name="menu" size={32} color="grey" />}
             >
               <HiddenItem title="Add" onPress={() => navigation.push("AddContact") }/>
+              <HiddenItem title="Clear" onPress={reloadContacts} />
               <HiddenItem title="Load" onPress={loadData} />
               <HiddenItem title="Sync" onPress={syncData} />
               <HiddenItem title="Text" onPress={smsContacts} />
               <HiddenItem title="Delete" onPress={deleteContacts} />
+              <HiddenItem title="Share" onPress={msgContact} />
               <HiddenItem title="Bunco" onPress={buncoSquad} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>

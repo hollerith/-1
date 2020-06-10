@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Alert, Button, Image, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Image, PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
+import SendIntentAndroid from 'react-native-send-intent'
+import Clipboard from "@react-native-community/clipboard"
 
 import { UserContext } from "../contexts/UserProvider"
 
@@ -16,24 +18,65 @@ import {
   OverflowMenuProvider
 } from 'react-navigation-header-buttons';
 
-const IoniconsHeaderButton = (props) => (
+const MastHead = (props) => (
   <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
 );
 
 function Settings({ route, navigaton }) {
-  const { signOut } = useContext(UserContext);
+  const { user, menu } = useContext(UserContext);
 
   const [state, setState] = useState({
-    name: "liveuser",
-  });
+    phone: "07738170000",
+    voicemail: "911",
+    username: user.username
+  })
+
+  const [phone, setPhone] = useState({ phone: "07738170000" })
+  const [voicemail, setVoiceMail] = useState({ voicemail: "07738172222" })
+  const [username, setUsername] = useState({ ...user })
 
   useEffect(() => {
-    (async () => {
-      AsyncStorage.getItem('name').then(value => {
-        console.log(`Retrieved ${value} from AsyncStorage`);
-        setState({ ...state, 'name' : value });
-      });
-    })();
+// (async () => {
+
+      console.log(`\n\x1b[35m${JSON.stringify(user, null, 4)} \x1b[0m`)
+      AsyncStorage.getItem('name').then(name => {
+        console.log(`Retrieved ${name} from AsyncStorage`);
+        setState({ ...state, username: name})
+        console.log(`\n\x1b[32m${JSON.stringify(user, null, 4)} \x1b[0m`)
+      })
+
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE,
+        {
+          'title': 'Contacts',
+          'message': 'This app would like to view your number.',
+          'buttonPositive': 'Please accept bare mortal'
+        }
+      ).then(() => {
+
+        // Show voicemail number
+        SendIntentAndroid.getVoiceMailNumber().then(voiceMailNumber => {
+          if (!voiceMailNumber) {
+            return console.error("Can`t get voiceMailNumber");
+          }
+          console.log(`Read phone state : voicemail ${voiceMailNumber}`)
+          return voiceMailNumber
+        }).then((voiceMailNumber) => {
+
+          // Show own phone number
+          SendIntentAndroid.getPhoneNumber().then(phoneNumber => {
+            if (!phoneNumber) {
+              return console.error("Can`t get phoneNumber");
+            }
+            console.log(`Read phone state : phone ${phoneNumber}`)
+            setState({ ...state, phone: phoneNumber, voicemail, voiceMailNumber })
+          });
+
+        })
+
+
+      })
+
+//  })();
   }, []);
 
   return (
@@ -42,19 +85,42 @@ function Settings({ route, navigaton }) {
         Settings
       </Text>
 
+      <View style={{margin:10}} />
+      <Button
+        title={`Share ${state.phone}`}
+        onPress={() => {
+          console.log(`Share ${state.phone}`)
+          SendIntentAndroid.sendText({
+            title: "Share phone details",
+            text: `${state.username}'s burner ${state.phone}.`,
+            type: SendIntentAndroid.TEXT_PLAIN,
+          });
+        }}
+      />
+
+      <View style={{margin:10}} />
+      <Button
+        title={ `Call voicemail ${state.voicemail}` }
+        onPress={() => {
+          console.log(state.voicemail)
+          SendIntentAndroid.sendPhoneCall(state.voicemail);
+        }}
+      />
+      <View style={{margin:20}} />
+
       <TextInput
         style={ styles.textinput }
-        placeholder="State your name here"
-        value={state.name}
-        onChangeText={data => setState({ name: data }) }
+        placeholder="Your name here"
+        value={state.username}
+        onChangeText={data => setState({ ...state, username: data }) }
       />
 
       <View style={{margin:20}} />
       <Button
         title="Save" 
         onPress={() => {
-          console.log(`Saving ${JSON.stringify(state.name)}`)
-          AsyncStorage.setItem('name', state.name);
+          console.log(`Saving ${state.username}`)
+          AsyncStorage.setItem('name', state.username);
         }}
       />
     </ScrollView>
@@ -82,7 +148,7 @@ export default function SettingsScreen({ navigation }) {
           fontWeight: 'bold',
         },
         headerRight: () => (
-          <HeaderButtons HeaderButtonComponent={IoniconsHeaderButton}>
+          <HeaderButtons HeaderButtonComponent={MastHead}>
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
               OverflowIcon={<Icon name="menu" size={32} color="grey" />}
@@ -109,6 +175,11 @@ const styles = StyleSheet.create({
     fontFamily: "Lobster-Regular",
     textAlign: "center",
     color: "tomato"
+  },
+  phone: {
+    fontSize: 36,
+    textAlign: "center",
+    color: "purple"
   },
   textinput: {
     fontSize: 32,
