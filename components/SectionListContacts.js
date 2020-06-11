@@ -7,7 +7,7 @@ import Row from './Row';
 const renderSectionHeader = ({ section }) => <Text style={ styles.title }>{section.title}</Text>;
 
 const SectionListContacts = props => {
-  const contactsByLetter = props.contacts.reduce((obj, contact) => {
+  const contactsByLetter = props.contacts.sort((a, b) => { return a.name > b.name ? 1 : -1 }).reduce((obj, contact) => {
     const firstLetter = contact.name[0].toUpperCase();
     return {
       ...obj,
