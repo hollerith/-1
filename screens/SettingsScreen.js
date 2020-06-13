@@ -6,6 +6,7 @@ import SendIntentAndroid from 'react-native-send-intent'
 import Clipboard from "@react-native-community/clipboard"
 
 import { UserContext } from "../contexts/UserProvider"
+import SettingsForm from "../components/SettingsForm"
 
 import { LogoTitle, SplashScreen } from "../components"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -18,84 +19,11 @@ import {
   OverflowMenuProvider
 } from 'react-navigation-header-buttons';
 
+const Stack = createStackNavigator();
+
 const MastHead = (props) => (
   <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
 );
-
-function Settings({ route, navigaton }) {
-  const { user, menu } = useContext(UserContext);
-
-  const [phone, setPhone] = useState({ phone: "07738170000" })
-  const [voicemail, setVoiceMail] = useState({ voicemail: "07738172222" })
-
-  useEffect(() => {
-    (async () => {
-
-      const granted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE, {
-        'title': 'Permissions to read phone number',
-        'message': 'This app would like to read phone state.',
-        'buttonPositive': 'Allow'
-      })
-
-      if (granted) {
-        // Show own phone number
-        const phoneNumber = await SendIntentAndroid.getPhoneNumber()
-        if (!phoneNumber) {
-          return console.error("Can`t get phoneNumber");
-        } else {
-          console.log(`Read phone state : phone ${phoneNumber}`)
-          setPhone(phoneNumber)
-        }
-
-        // Show voicemail number
-        const voiceMailNumber = await SendIntentAndroid.getVoiceMailNumber()
-        if (!voiceMailNumber) {
-          return console.error("Can`t get voiceMailNumber");
-        } else {
-          console.log(`Read phone state : voicemail ${voiceMailNumber}`)
-          setVoiceMail(voiceMailNumber)
-        }
-      }
-
-    })();
-  }, []);
-
-  return (
-    <ScrollView style={{padding: 20}}>
-      <Text style={ styles.banner }>
-        Settings
-      </Text>
-
-      <Text style={[ styles.textinput, styles.text] }>{ user.username }</Text>
-
-      <View style={{margin:10}} />
-      <Button
-        title={`Share ${phone}`}
-        onPress={() => {
-          console.log(`Share ${phone}`)
-          SendIntentAndroid.sendText({
-            title: "Share phone details",
-            text: `${user.username}'s burner ${phone}.`,
-            type: SendIntentAndroid.TEXT_PLAIN,
-          });
-        }}
-      />
-
-      <View style={{margin:10}} />
-      <Button
-        title={ `Call voicemail ${voicemail}` }
-        onPress={() => {
-          console.log(voicemail)
-          SendIntentAndroid.sendPhoneCall(voicemail);
-        }}
-      />
-      <View style={{margin:20}} />
-
-    </ScrollView>
-  );
-}
-
-const Stack = createStackNavigator();
 
 export default function SettingsScreen({ navigation }) {
 
@@ -128,37 +56,7 @@ export default function SettingsScreen({ navigation }) {
         ),
       }}
     >
-      <Stack.Screen name="Settings" component={Settings} options={{title: 'Settings'}} />
+      <Stack.Screen name="Settings" component={SettingsForm} options={{title: 'Settings'}} />
     </Stack.Navigator>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    flex: 1
-  },
-  banner: {
-    fontSize: 36,
-    fontFamily: "Lobster-Regular",
-    textAlign: "center",
-    color: "tomato"
-  },
-  phone: {
-    fontSize: 36,
-    textAlign: "center",
-    color: "purple"
-  },
-  textinput: {
-    fontSize: 32,
-    borderWidth: 1,
-    borderColor: 'lightgrey',
-    minWidth: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 3,
-  },
-  text: {
-    textAlign: "center"
-  }
-});

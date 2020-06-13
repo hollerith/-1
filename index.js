@@ -63,21 +63,14 @@ function Main({ route, navigation }){
 
   return (
     <Stack.Navigator>
-      {user.isLoading ? (
-        // We haven't finished checking for the token yet
-        <Stack.Screen name="Splash" component={SplashScreen} />
-      ) : user.userToken == null ? (
-        // No token found, user isn't signed in
-        <Stack.Screen name="SignIn" component={ LoginScreen } />
-      ) : (
-        // User is signed in
-        <Stack.Screen 
-          name="BottomTabs" 
-          component={ BottomTabs }
-          options={{ headerShown: false }}
-        />
-      )}
-      <Stack.Screen name="SignUp" component={ SignUpScreen } />
+      {user.isLoading // We haven't finished checking for the token yet
+        ? (<Stack.Screen name="Splash" component={SplashScreen} />) 
+        : user.userToken == null // No token found, user isn't signed in
+          ? user.username
+            ? (<Stack.Screen name="SignIn" component={ LoginScreen } />) 
+            : (<Stack.Screen name="SignUp" component={ SignUpScreen } />)
+          : (<Stack.Screen name="BottomTabs" component={ BottomTabs } options={{ headerShown: false }} />) 
+      }
     </Stack.Navigator>
   )
 }

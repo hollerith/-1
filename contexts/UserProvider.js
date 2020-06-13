@@ -1,8 +1,15 @@
 import React, { createContext, useState, useEffect, useReducer, useMemo } from "react";
 import AsyncStorage from '@react-native-community/async-storage'
+import bcrypt from "react-native-bcrypt"
+import isaac from "isaac"
 
 const UserContext = createContext();
 const { Provider } = UserContext;
+
+bcrypt.setRandomFallback((len) => {
+	const buf = new Uint8Array(len);
+	return buf.map(() => Math.floor(isaac.random() * 256));
+});
 
 const UserProvider = props => {
 
@@ -10,10 +17,10 @@ const UserProvider = props => {
     (prevState, action) => {
       switch (action.type) {
         case 'RESTORE_TOKEN':
-          console.log(`Restoring state ${JSON.stringify(action)}`);
           return {
             ...prevState,
             userToken: action.token,
+            username: action.username,
             isLoading: false,
           };
         case 'SIGN_IN':
@@ -36,6 +43,12 @@ const UserProvider = props => {
             isSignout: true,
             userToken: null,
           };
+        case 'FAIL_TOKEN':
+          return {
+            ...prevState,
+            isLoading: false,
+            username: "",
+          };
       }
     },
     {
@@ -43,43 +56,57 @@ const UserProvider = props => {
       isSignout: false,
       userToken: null,
       username: "",
+      userhash: "",
     }
   );
 
   useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
-      let userToken;
+      console.log('\x1b[33m"Booting::\x1b[34mUser Context\x1b[0m')
+      let userToken, account
       try {
-        userToken = await AsyncStorage.getItem("userToken");
-        dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+        userToken = await AsyncStorage.getItem("userToken")
+        console.log(`\x1b[33m"Booting::\x1b[36m${userToken}\x1b[0m`)
+        if (userToken) {
+          account = JSON.parse(await AsyncStorage.getItem("account"))
+          console.log(`\x1b[33m"Booting::\x1b[35m${account.login}\x1b[0m`)
+          dispatch({ type: 'RESTORE_TOKEN', token: userToken, username: account.login })
+        } else {
+          dispatch({ type: 'FAIL_TOKEN' })
+        }
       } catch (e) {
-        console.log(`index.js :: Restoring token failed ${e.message}`);
+        console.log(`index.js :: Restoring token failed ${e.message}`)
+        dispatch({ type: 'FAIL_TOKEN' })
       }
-    };
+    }
 
-    bootstrapAsync();
+    bootstrapAsync()
   }, []);
 
   const menu = useMemo(
     () => ({
-      signIn: async (data) => {
+      signIn: async (input) => {
         // TODO: validate login details
-        const login = await AsyncStorage.getItem('username')
-        console.log(`Login : ${login}`)
-        if (login == data.username) {
+        const account = JSON.parse(await AsyncStorage.getItem('account'))
+        console.log(`Login : ${account.login}`)
+        if (input.username == account.login && bcrypt.compareSync(input.password, account.userhash)) {
           await AsyncStorage.setItem("userToken", "dummy-auth-token");
-          dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', username: login });
+          dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', username: account.login });
+        } else {
+          Alert.alert('Wrong user or bad password')
         }
       },
       signOut: async () => {
         await AsyncStorage.removeItem("userToken");
         dispatch({ type: 'SIGN_OUT' });
       },
-      signUp: async data => {
+      signUp: async input => {
         // TODO: create account
-        dispatch({ type: 'SIGN_UP', username: data.username });
-        await AsyncStorage.setItem("username", data.username);
+        const salt = bcrypt.genSaltSync(10);
+        const hash = bcrypt.hashSync(input.password, salt);
+        dispatch({ type: 'SIGN_UP', username: input.username, userhash: hash });
+        await AsyncStorage.setItem("account", JSON.stringify({ login: input.username, userhash: hash}));
       },
     }),
     []

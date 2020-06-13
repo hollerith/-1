@@ -20,7 +20,6 @@ export default function LoginScreen({route, navigation}) {
   const onPress = () => {
     console.log(`Sign up with ${username}`);
     menu.signUp({ username, password });
-    navigation.navigate('SignIn')
   }
 
   const isSignout = user.isSignout;

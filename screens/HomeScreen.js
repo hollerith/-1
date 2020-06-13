@@ -29,6 +29,7 @@ const HomeStack = createStackNavigator();
 export default function HomeScreen({ navigation }) {
 
   const { menu } = useContext(UserContext);
+
   const { 
     buncoSquad, 
     reloadContacts,
@@ -57,16 +58,21 @@ export default function HomeScreen({ navigation }) {
             <Item title="Add" iconName="plus" onPress={() => navigation.push("AddContact")} />
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
-              OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+              OverflowIcon={<Icon name="account" size={32} color="grey" />}
             >
               <HiddenItem title="Add" onPress={() => navigation.push("AddContact") }/>
-              <HiddenItem title="Clear" onPress={reloadContacts} />
+              <HiddenItem title="Delete" onPress={deleteContacts} />
               <HiddenItem title="Load" onPress={loadData} />
               <HiddenItem title="Sync" onPress={syncData} />
+              <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
+            </OverflowMenu>
+            <OverflowMenu
+              style={{ marginHorizontal: 10 }}
+              OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+            >
               <HiddenItem title="Text" onPress={smsContacts} />
-              <HiddenItem title="Delete" onPress={deleteContacts} />
+              <HiddenItem title="Clear" onPress={reloadContacts} />
               <HiddenItem title="Share" onPress={msgContact} />
-              <HiddenItem title="Bunco" onPress={buncoSquad} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>

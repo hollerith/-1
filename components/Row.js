@@ -4,12 +4,12 @@ import PropTypes from 'prop-types';
 
 const Row = props => (
   <TouchableOpacity
-    style={ props.checked ? styles.selected : styles.row }
+    style={ props.checked ? styles.rowselect : styles.row }
     onPress={() => props.onSelectContact(props)}
     onLongPress={() => props.onCheckContact(props)}
   >
-    <Text style={ styles.text }>{props.name}</Text>
-    <Text style={ styles.text }>{props.phone}</Text>
+    <Text style={ props.checked ? styles.selected : styles.text }>{props.name}</Text>
+    <Text style={ props.checked ? styles.selected : styles.text }>{props.phone}</Text>
   </TouchableOpacity>
 );
 
@@ -27,11 +27,17 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: "aliceblue",
   },
-  selected: { 
+  rowselect: { 
     padding: 20,
     flexDirection: 'row', 
     justifyContent: 'space-between',
-    backgroundColor: "lightgreen",
+    backgroundColor: "antiquewhite",
+  },
+  selected: {
+    fontWeight: "bold",
+    color: "tomato",
+    backgroundColor: "antiquewhite",
+    fontSize: 18,    
   },
   text: {
     fontSize: 18,    

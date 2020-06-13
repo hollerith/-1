@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
+import { Alert, Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
 
 import { LogoTitle, SplashScreen } from "../components"
 import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons';
@@ -18,7 +18,7 @@ export default function LoginScreen({route, navigation}) {
   const [password, setPassword] = useState('P455w0rd.');
 
   const onPress = () => {
-    console.log(`Sign in ${username}`);
+    console.log(`Sign in with ${username}`);
     menu.signIn({ username, password });
   }
 

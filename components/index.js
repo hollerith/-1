@@ -1,18 +1,18 @@
 import React from "react";
-import { View, Text, Image } from "react-native";
+import { View, Text, Image, ImageBackground } from "react-native";
 
 function SplashScreen() {
   return (
-    <View>
-      <Text>Loading...</Text>
-    </View>
+    <>
+      <ImageBackground style={{ width: 550, height: 550 }} resizeMode='cover' source={require('../assets/tomatocream.gif')}/>
+    </>
   );
 }
 
 function LogoTitle() {
   return (
     <Image
-      style={{ width: 50, height: 50 }}
+      style={{ width: 32, height: 32 }}
       source={require('../assets/logo.png')}
     />
   );

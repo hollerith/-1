@@ -141,7 +141,7 @@ const DataProvider = props => {
     console.log('DataContext::msgContact');
     SendIntentAndroid.sendText({
       title: "Please share this text",
-      text: JSON.stringify((contacts.filter(i => i.checked) !== [] ? contacts : contacts.filter(i => i.checked)), null, 4),
+      text: JSON.stringify((contacts.filter(i => i.checked) === [] ? contacts : contacts.filter(i => i.checked)), null, 4),
       type: SendIntentAndroid.TEXT_PLAIN,
     });
   }
