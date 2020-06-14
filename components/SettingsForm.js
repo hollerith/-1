@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
+import PropTypes from 'prop-types';
+
 import { 
   Alert, 
   Button, 
@@ -7,13 +9,27 @@ import {
   StyleSheet, 
   Text, 
   TextInput, 
+  TouchableOpacity,
   View 
 } from "react-native"
 
+import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from '@react-native-community/async-storage';
 import SendIntentAndroid from 'react-native-send-intent'
 
 import { UserContext } from "../contexts/UserProvider"
+
+const Setting = props => (
+  <View style={styles.menuListItemBorder}>
+    <TouchableOpacity onPress={() => props.onPress()}>
+      <View style={styles.menuListItem}>
+        <Icon style={styles.menuListIcon} name={props.icon} size={48}/>
+        <Text style={styles.menuListLabel}>{props.label}</Text>
+        <Icon style={styles.menuListIcon} name="chevron-right" size={48}/>
+      </View>
+    </TouchableOpacity>
+  </View>
+)
 
 function SettingsForm({ route, navigaton }) {
   const { user, menu } = useContext(UserContext);
@@ -58,18 +74,32 @@ function SettingsForm({ route, navigaton }) {
       <Text style={ styles.banner }>
         Settings
       </Text>
-      <View style={{margin:10}} />
-      <View>      
-        <TextInput style={[ styles.textinput, styles.text] }>{ user.username }</TextInput>
-        <Button
-          title="Save"
+      <View style={{ flex: 1}}>
+        <View style={styles.menuListItemBorder}>
+          <View style={styles.menuListItem}>
+            <Icon style={styles.menuListIcon} name="account" size={48}/>
+            <TextInput style={[ styles.textinput, styles.text] }>{ user.username }</TextInput>
+            <TouchableOpacity 
+              onPress={() => {
+                Alert.alert('Chnaged')
+              }}>
+              <Icon style={[styles.menuListIcon, { color: "green"} ]} name="check-circle" size={48}/>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <Setting 
+          icon="cassette" 
+          label={`Call ${voicemail}`} 
           onPress={() => {
-            Alert.alert('Change username')
+            console.log(voicemail)
+            SendIntentAndroid.sendPhoneCall(voicemail);
           }}
         />
-        <Text style={[ styles.textinput, styles.text] }>{`Share ${phone}`}</Text>
-        <Button
-          title="Share"
+
+        <Setting 
+          icon="share" 
+          label={`Share ${phone}`} 
           onPress={() => {
             SendIntentAndroid.sendText({
               title: "Share phone details",
@@ -79,18 +109,6 @@ function SettingsForm({ route, navigaton }) {
           }}
         />
       </View>
-      <View style={{margin:10}} />
-      <View>
-        <Text style={[ styles.textinput, styles.text] }>{`Voicemail ${voicemail}` }</Text>
-        <Button
-          title="Call"
-          onPress={() => {
-            console.log(voicemail)
-            SendIntentAndroid.sendPhoneCall(voicemail);
-          }}
-        />
-      </View>
-      <View style={{margin:20}} />
     </ScrollView>
   );
 }
@@ -109,15 +127,36 @@ const styles = StyleSheet.create({
     color: "tomato"
   },
   textinput: {
-    fontSize: 18,
+    fontSize: 22,
+    fontWeight: "bold",
     borderWidth: 1,
     borderColor: 'lightgrey',
     minWidth: 100,
+    marginHorizontal: 5,
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 3,
   },
   text: {
-    textAlign: "center"
-  }
+    textAlign: "center",
+    flex: 1
+  },
+  menuListItemBorder: {
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: '#ccc',
+  },
+  menuListItem: {
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  menuListIcon: {
+    color: "#999",
+  },
+  menuListLabel: {
+    marginVertical: 8,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
 });
