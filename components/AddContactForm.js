@@ -28,6 +28,15 @@ const AddContactForm = ({ navigation }) => {
     validateForm();
   }, [state.name, state.phone]);
 
+  const validateForm = () => {
+    if (state.phone.match(phoneno) && state.name.length > 0) {
+      setState({...state, isFormValid: true });
+    } else {
+      setState({...state, isFormValid: false });
+    }
+    return state.isFormValid
+  };
+
   const onPress = () => {
     const newContact = { id: new Date().getTime().toString(), name: state.name, phone: state.phone };
     addContact(newContact);
@@ -36,15 +45,6 @@ const AddContactForm = ({ navigation }) => {
 
   const getHandler = key => val => {
     setState({...state, [key]: val });
-  };
-
-  const validateForm = () => {
-    if (state.phone.match(phoneno) && state.name.length > 0) {
-      setState({...state, isFormValid: true });
-    } else {
-      setState({...state, isFormValid: false });
-    }
-    return state.isFormValid
   };
 
   return (

@@ -84,6 +84,7 @@ const UserProvider = props => {
     bootstrapAsync()
   }, []);
 
+  // menu of actions
   const menu = useMemo(
     () => ({
       signIn: async (input) => {
@@ -107,6 +108,11 @@ const UserProvider = props => {
         const hash = bcrypt.hashSync(input.password, salt);
         dispatch({ type: 'SIGN_UP', username: input.username, userhash: hash });
         await AsyncStorage.setItem("account", JSON.stringify({ login: input.username, userhash: hash}));
+      },
+      changeUser: async input => {
+        dispatch({ type: 'SIGN_UP', username: input.username });
+        const account = JSON.parse(await AsyncStorage.getItem('account'))
+        await AsyncStorage.setItem("account", JSON.stringify({ ...account, login: input.username}));
       },
     }),
     []

@@ -23,8 +23,11 @@ const Setting = props => (
   <View style={styles.menuListItemBorder}>
     <TouchableOpacity onPress={() => props.onPress()}>
       <View style={styles.menuListItem}>
-        <Icon style={styles.menuListIcon} name={props.icon} size={48}/>
-        <Text style={styles.menuListLabel}>{props.label}</Text>
+        <Icon style={[styles.menuListIcon, { color: props.iconColor}]} name={props.icon} size={48}/>
+        <View>
+          <Text style={styles.menuListLabel}>{props.label}</Text>
+          <Text style={[styles.text, {fontSize: 12}]}>{props.hint}</Text>
+        </View>
         <Icon style={styles.menuListIcon} name="chevron-right" size={48}/>
       </View>
     </TouchableOpacity>
@@ -34,6 +37,7 @@ const Setting = props => (
 function SettingsForm({ route, navigaton }) {
   const { user, menu } = useContext(UserContext);
 
+  const [account, setAccount] = useState({ name: user.username, isValid: true })
   const [phone, setPhone] = useState({ phone: "07738170000" })
   const [voicemail, setVoiceMail] = useState({ voicemail: "07738172222" })
 
@@ -70,27 +74,44 @@ function SettingsForm({ route, navigaton }) {
   }, []);
 
   return (
-    <ScrollView style={{padding: 20}}>
+    <ScrollView>
       <Text style={ styles.banner }>
         Settings
       </Text>
       <View style={{ flex: 1}}>
         <View style={styles.menuListItemBorder}>
           <View style={styles.menuListItem}>
-            <Icon style={styles.menuListIcon} name="account" size={48}/>
-            <TextInput style={[ styles.textinput, styles.text] }>{ user.username }</TextInput>
+            <Icon style={[styles.menuListIcon, { color: "black"}]} name="account" size={48}/>
+            <TextInput 
+              style={[ styles.textinput, styles.text] }
+              onChangeText={ (value) => { 
+                if (value.length > 0) return setAccount({ name: value, isValid: true}) 
+                return setAccount({ name: value, isValid: false}) 
+              }}
+            >{ account.name }</TextInput>
             <TouchableOpacity 
               onPress={() => {
-                Alert.alert('Chnaged')
+                if (account.isValid) {
+                  Alert.alert('Changed')
+                  menu.changeUser({ username: account.name })
+                }
               }}>
-              <Icon style={[styles.menuListIcon, { color: "green"} ]} name="check-circle" size={48}/>
+              <Icon 
+                name="check-circle" 
+                style={[
+                  styles.menuListIcon, 
+                  { color: account.isValid ? "green" : "gray" } 
+                ]} 
+                size={48}/>
             </TouchableOpacity>
           </View>
         </View>
 
         <Setting 
           icon="cassette" 
-          label={`Call ${voicemail}`} 
+          iconColor="darkorange"
+          label="Call Voicemail"
+          hint={`${voicemail}`}
           onPress={() => {
             console.log(voicemail)
             SendIntentAndroid.sendPhoneCall(voicemail);
@@ -99,7 +120,9 @@ function SettingsForm({ route, navigaton }) {
 
         <Setting 
           icon="share" 
-          label={`Share ${phone}`} 
+          label="Share number"
+          iconColor="skyblue"
+          hint={`${phone}`}
           onPress={() => {
             SendIntentAndroid.sendText({
               title: "Share phone details",
@@ -155,7 +178,6 @@ const styles = StyleSheet.create({
     color: "#999",
   },
   menuListLabel: {
-    marginVertical: 8,
     fontSize: 20,
     fontWeight: "bold",
   },

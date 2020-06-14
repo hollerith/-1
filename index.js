@@ -47,7 +47,7 @@ function BottomTabs({ route, navigation }){
           activeTintColor: 'tomato',
           inactiveTintColor: 'gray',
           inactiveBackgroundColor: 'lightgray',
-          style: { height: 72 }
+          style: { height: 56 }
         }}>
         <BottomTab.Screen name="Home" component={HomeScreen} />
         <BottomTab.Screen name="Settings" component={SettingsScreen} />
