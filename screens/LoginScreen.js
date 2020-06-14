@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Alert, Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
 
-import { LogoTitle, SplashScreen } from "../components"
+import { LogoTitle, SplashScreen, Masthead } from "../components"
+
 import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const Masthead = (props) => (
-  <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
-);
-
+import { ThemeContext } from "../contexts/ThemeProvider"
 import { UserContext } from "../contexts/UserProvider"
 
 export default function LoginScreen({route, navigation}) {
-  const { user, menu } = useContext(UserContext);
 
-  const [username, setUsername] = useState(user.username);
-  const [password, setPassword] = useState('P455w0rd.');
+  const { theme } = useContext(ThemeContext)
+  const { user, menu } = useContext(UserContext)
+
+  const [username, setUsername] = useState(user.username)
+  const [password, setPassword] = useState('P455w0rd.')
 
   const onPress = () => {
     console.log(`Sign in with ${username}`);
@@ -24,14 +24,36 @@ export default function LoginScreen({route, navigation}) {
 
   const isSignout = user.isSignout;
 
+  const styles = StyleSheet.create({
+    banner: {
+      fontSize: 48, 
+      fontFamily: theme.bannerFontFamily,
+      textAlign: "center",
+      color: theme.activeTintColor
+    },
+    textinput: {
+      fontSize: 24, 
+      borderWidth: 1,
+      borderColor: theme.borderColor,
+      minWidth: 100,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 3,
+    },
+    password: {
+      marginTop: 10,
+      marginVertical: 50,
+    }
+  });
+
   navigation.setOptions({ 
     title: '',
     headerTitle: props => <LogoTitle {...props} />,
     headerTitleAlign: "center",
     headerStyle: {
-      backgroundColor: 'white',
+      backgroundColor: theme.headerBackgroundColor,
     },
-    headerTintColor: 'gray',
+    headerTintColor: theme.headerTintColor,
     headerTitleStyle: {
       fontWeight: 'bold',
     },
@@ -39,7 +61,7 @@ export default function LoginScreen({route, navigation}) {
       <HeaderButtons HeaderButtonComponent={Masthead}>
         <OverflowMenu
           style={{ marginHorizontal: 10 }}
-          OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+          OverflowIcon={<Icon name="menu" size={32} color={theme.iconColor} />}
         >
           <HiddenItem title="Register" onPress={() => navigation.navigate('SignUp')} />
         </OverflowMenu>
@@ -49,7 +71,7 @@ export default function LoginScreen({route, navigation}) {
   })
 
   return (
-    <ScrollView style={{padding: 20}}>
+    <ScrollView style={{padding: 20, color: theme.backgroundColor}}>
       <Text 
           style={ styles.banner }>
           Welcome
@@ -72,26 +94,3 @@ export default function LoginScreen({route, navigation}) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  banner: {
-    fontSize: 48, 
-    fontFamily: "Lobster-Regular",
-    textAlign: "center",
-    color: "tomato"
-  },
-  textinput: {
-    fontSize: 24, 
-    borderWidth: 1,
-    borderColor: 'lightgrey',
-    minWidth: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 3,
-  },
-  password: {
-    marginTop: 10,
-    marginVertical: 50,
-  }
-});
-

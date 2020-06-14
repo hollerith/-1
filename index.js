@@ -11,22 +11,22 @@ import SignUpScreen from "./screens/SignUpScreen";
 import HomeScreen from "./screens/HomeScreen";
 
 import AsyncStorage from '@react-native-community/async-storage'
-import { DataProvider } from "./contexts/DataProvider"
+
 import { UserProvider, UserContext } from "./contexts/UserProvider"
+import { ThemeProvider, ThemeContext } from "./contexts/ThemeProvider"
+import { DataProvider } from "./contexts/DataProvider"
 
 import { LogoTitle, SplashScreen } from "./components"
 import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu, OverflowMenuProvider } from 'react-navigation-header-buttons';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
-
-const Masthead = (props) => (
-  <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
-);
 
 const Stack = createStackNavigator()
 const HomeStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
 function BottomTabs({ route, navigation }){
+
+  const { theme } = useContext(ThemeContext);
   
   return (
     <DataProvider>
@@ -44,9 +44,9 @@ function BottomTabs({ route, navigation }){
           },
         })}
         tabBarOptions={{
-          activeTintColor: 'tomato',
-          inactiveTintColor: 'gray',
-          inactiveBackgroundColor: 'lightgray',
+          activeTintColor: theme.activeTintColor,
+          inactiveTintColor: theme.inactiveTintColor,
+          inactiveBackgroundColor: theme.inactiveBackgroundColor,
           style: { height: 56 }
         }}>
         <BottomTab.Screen name="Home" component={HomeScreen} />
@@ -78,12 +78,14 @@ function Main({ route, navigation }){
 export default function App() {
   
   return (
-    <UserProvider>
-      <NavigationContainer>
-        <OverflowMenuProvider>
-          <Main/>
-        </OverflowMenuProvider>
-      </NavigationContainer>
-    </UserProvider>
+    <ThemeProvider>
+      <UserProvider>
+        <NavigationContainer>
+          <OverflowMenuProvider>
+            <Main/>
+          </OverflowMenuProvider>
+        </NavigationContainer>
+      </UserProvider>
+    </ThemeProvider>
   );
 }

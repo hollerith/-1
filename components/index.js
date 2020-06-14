@@ -1,5 +1,15 @@
-import React from "react";
-import { View, Text, Image, ImageBackground } from "react-native";
+import React, { useContext } from "react"
+import { View, Text, Image, ImageBackground } from "react-native"
+import { ThemeContext } from "../contexts/ThemeProvider"
+import { HeaderButton } from 'react-navigation-header-buttons'
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+
+const Masthead = (props) => {
+  const { theme } = useContext(ThemeContext)
+  return (
+    <HeaderButton {...props} IconComponent={Icon} iconSize={32} color={ theme.iconColor } />
+  )
+}
 
 function SplashScreen() {
   return (
@@ -18,5 +28,5 @@ function LogoTitle() {
   );
 }
 
-export { SplashScreen, LogoTitle }
+export { SplashScreen, LogoTitle, Masthead }
 

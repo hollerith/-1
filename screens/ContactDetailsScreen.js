@@ -2,19 +2,27 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { UserContext } from "../contexts/UserProvider"
 import { DataContext } from "../contexts/DataProvider"
+import { ThemeContext } from "../contexts/ThemeProvider"
 
 import { LogoTitle, SplashScreen } from "../components"
 import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons'
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const Masthead = (props) => (
-  <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
-);
+const Masthead = (props) => {
+  const { theme } = useContext(ThemeContext)
+
+  return (
+    <HeaderButton {...props} IconComponent={Icon} iconSize={32} color={ theme.iconColor } />
+  )
+}
 
 export default function ContactDetailsScreen({ route, navigation }) {
   const { id, name, phone, checked } = route.params;
+
+  const { theme } = useContext(ThemeContext)
   const { user, isSignout, menu } = useContext(UserContext);
   const { deleteContacts, saveContact, callContact, smsContact } = useContext(DataContext);
+
   const [state, setState] = useState({ name: name, phone: phone})
 
   const onPressCall = () => {
@@ -46,6 +54,32 @@ export default function ContactDetailsScreen({ route, navigation }) {
     navigation.navigate('ContactList')
   }
 
+  const styles = StyleSheet.create({
+    container: {
+      justifyContent: "center",
+      flex: 1
+    },
+    banner: {
+      fontSize: 36,
+      fontFamily: theme.bannerFontFamily,
+      textAlign: "center",
+      color: theme.activeTintColor
+    },
+    textinput: {
+      fontSize: 24,
+      borderWidth: 1,
+      borderColor: theme.borderColor,
+      minWidth: 100,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      marginVertical: 10,
+      borderRadius: 3,
+    },
+    text: {
+      textAlign: "center"
+    }
+  });
+
   useEffect(() => {
     console.log(`ContactDetailsScreen::On first render `);
     console.log(`  ~> route.params -${JSON.stringify(route.params)}`);
@@ -56,9 +90,9 @@ export default function ContactDetailsScreen({ route, navigation }) {
     headerTitle: props => <LogoTitle {...props} />,
     headerTitleAlign: "center",
     headerStyle: {
-      backgroundColor: 'white',
+      backgroundColor: theme.headerBackgroundColor,
     },
-    headerTintColor: 'gray',
+    headerTintColor: theme.headerTintColor,
     headerTitleStyle: {
       fontWeight: 'bold',
     },
@@ -97,31 +131,3 @@ export default function ContactDetailsScreen({ route, navigation }) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    flex: 1
-  },
-  banner: {
-    fontSize: 36,
-    fontFamily: "Lobster-Regular",
-    textAlign: "center",
-    color: "tomato"
-  },
-  textinput: {
-    fontSize: 24,
-    borderWidth: 1,
-    borderColor: 'lightgrey',
-    minWidth: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginVertical: 10,
-    borderRadius: 3,
-  },
-  text: {
-    textAlign: "center"
-  }
-});
-
-

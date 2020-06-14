@@ -1,18 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
 
-import { LogoTitle, SplashScreen } from "../components"
+import { LogoTitle, SplashScreen, Masthead } from "../components"
 import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons';
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-const Masthead = (props) => (
-  <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
-);
-
+import { ThemeContext } from "../contexts/ThemeProvider"
 import { UserContext } from "../contexts/UserProvider"
 
 export default function LoginScreen({route, navigation}) {
-  const { user, menu } = useContext(UserContext);
+  const { theme } = useContext(ThemeContext)
+  const { user, menu } = useContext(UserContext)
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState('P455w0rd.');
@@ -23,6 +21,28 @@ export default function LoginScreen({route, navigation}) {
   }
 
   const isSignout = user.isSignout;
+
+  const styles = StyleSheet.create({
+    banner: {
+      fontSize: 48, 
+      fontFamily: theme.bannerFontFamily,
+      textAlign: "center",
+      color: theme.activeTintColor
+    },
+    textinput: {
+      fontSize: 24, 
+      borderWidth: 1,
+      borderColor: theme.borderColor,
+      minWidth: 100,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 3,
+    },
+    password: {
+      marginTop: 10,
+      marginVertical: 50,
+    }
+  });
 
   navigation.setOptions({ 
     title: '',
@@ -49,7 +69,7 @@ export default function LoginScreen({route, navigation}) {
   })
 
   return (
-    <ScrollView style={{padding: 20}}>
+    <ScrollView style={{padding: 20, backgroundColor: theme.backgroundColor}}>
       <Text 
           style={ styles.banner }>
           Register
@@ -72,26 +92,3 @@ export default function LoginScreen({route, navigation}) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  banner: {
-    fontSize: 48, 
-    fontFamily: "Lobster-Regular",
-    textAlign: "center",
-    color: "tomato"
-  },
-  textinput: {
-    fontSize: 24, 
-    borderWidth: 1,
-    borderColor: 'lightgrey',
-    minWidth: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 3,
-  },
-  password: {
-    marginTop: 10,
-    marginVertical: 50,
-  }
-});
-

@@ -18,23 +18,12 @@ import AsyncStorage from '@react-native-community/async-storage';
 import SendIntentAndroid from 'react-native-send-intent'
 
 import { UserContext } from "../contexts/UserProvider"
+import { ThemeContext } from "../contexts/ThemeProvider"
 
-const Setting = props => (
-  <View style={styles.menuListItemBorder}>
-    <TouchableOpacity onPress={() => props.onPress()}>
-      <View style={styles.menuListItem}>
-        <Icon style={[styles.menuListIcon, { color: props.iconColor}]} name={props.icon} size={48}/>
-        <View>
-          <Text style={styles.menuListLabel}>{props.label}</Text>
-          <Text style={[styles.text, {fontSize: 12}]}>{props.hint}</Text>
-        </View>
-        <Icon style={styles.menuListIcon} name="chevron-right" size={48}/>
-      </View>
-    </TouchableOpacity>
-  </View>
-)
 
 function SettingsForm({ route, navigaton }) {
+
+  const { theme } = useContext(ThemeContext)
   const { user, menu } = useContext(UserContext);
 
   const [account, setAccount] = useState({ name: user.username, isValid: true })
@@ -73,15 +62,79 @@ function SettingsForm({ route, navigaton }) {
     })();
   }, []);
 
+  const styles = StyleSheet.create({
+    container: {
+      justifyContent: "center",
+      flex: 1
+    },
+    banner: {
+      fontSize: 36,
+      fontFamily: theme.bannerFontFamily,
+      textAlign: "center",
+      color: theme.activeTintColor
+    },
+    textinput: {
+      fontSize: 22,
+      fontWeight: "bold",
+      borderWidth: 1,
+      borderColor: theme.borderColor,
+      minWidth: 100,
+      marginHorizontal: 5,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      borderRadius: 3,
+    },
+    text: {
+      textAlign: "center",
+      color: theme.textColor,
+      backgroundColor: theme.textBackgroundColor,
+      flex: 1
+    },
+    menuListItemBorder: {
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.borderColor,
+    },
+    menuListItem: {
+      paddingVertical: 16,
+      paddingHorizontal: 16,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    menuListIcon: {
+      color: theme.menuListIconColor,
+    },
+    menuListLabel: {
+      fontSize: 20,
+      fontWeight: "bold",
+      color: theme.textColor,
+      backgroundColor: theme.textBackgroundColor,
+    },
+  });
+
+  const Setting = props => (
+    <View style={styles.menuListItemBorder}>
+      <TouchableOpacity onPress={() => props.onPress()}>
+        <View style={styles.menuListItem}>
+          <Icon style={[styles.menuListIcon, { color: props.iconColor}]} name={props.icon} size={36}/>
+          <View>
+            <Text style={styles.menuListLabel}>{props.label}</Text>
+            <Text style={[styles.text, {fontSize: 12}]}>{props.hint}</Text>
+          </View>
+          <Icon style={styles.menuListIcon} name="chevron-right" size={36}/>
+        </View>
+      </TouchableOpacity>
+    </View>
+  )
+
   return (
-    <ScrollView>
+    <ScrollView style={{backgroundColor: theme.backgroundColor}}>
       <Text style={ styles.banner }>
         Settings
       </Text>
       <View style={{ flex: 1}}>
         <View style={styles.menuListItemBorder}>
           <View style={styles.menuListItem}>
-            <Icon style={[styles.menuListIcon, { color: "black"}]} name="account" size={48}/>
+            <Icon style={[styles.menuListIcon, { color: "black"}]} name="account" size={36}/>
             <TextInput 
               style={[ styles.textinput, styles.text] }
               onChangeText={ (value) => { 
@@ -92,17 +145,17 @@ function SettingsForm({ route, navigaton }) {
             <TouchableOpacity 
               onPress={() => {
                 if (account.isValid) {
-                  Alert.alert('Changed')
                   menu.changeUser({ username: account.name })
+                  Alert.alert('Changed')
                 }
               }}>
               <Icon 
                 name="check-circle" 
                 style={[
                   styles.menuListIcon, 
-                  { color: account.isValid ? "green" : "gray" } 
+                  { color: account.isValid ? "green" : theme.inactiveTintColor } 
                 ]} 
-                size={48}/>
+                size={36}/>
             </TouchableOpacity>
           </View>
         </View>
@@ -137,48 +190,3 @@ function SettingsForm({ route, navigaton }) {
 }
 
 export default SettingsForm
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    flex: 1
-  },
-  banner: {
-    fontSize: 36,
-    fontFamily: "Lobster-Regular",
-    textAlign: "center",
-    color: "tomato"
-  },
-  textinput: {
-    fontSize: 22,
-    fontWeight: "bold",
-    borderWidth: 1,
-    borderColor: 'lightgrey',
-    minWidth: 100,
-    marginHorizontal: 5,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 3,
-  },
-  text: {
-    textAlign: "center",
-    flex: 1
-  },
-  menuListItemBorder: {
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#ccc',
-  },
-  menuListItem: {
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  menuListIcon: {
-    color: "#999",
-  },
-  menuListLabel: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-});

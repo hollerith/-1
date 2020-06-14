@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { SectionList, Text, StyleSheet } from 'react-native';
 import PropTypes from 'prop-types';
+import { ThemeContext } from "../contexts/ThemeProvider"
 
 import Row from './Row';
 
-const renderSectionHeader = ({ section }) => <Text style={ styles.title }>{section.title}</Text>;
-
 const SectionListContacts = props => {
+
+  const { theme } = useContext(ThemeContext)
+
+  const styles = StyleSheet.create({
+    title: {
+      flex: 1,
+      textAlign: "center",
+      fontSize: 32,
+      fontWeight: "bold",
+      color: theme.activeTintColor,
+      backgroundColor: theme.sectionBackgroundColor,
+    },
+  });
+
+  const renderSectionHeader = ({ section }) => <Text style={ styles.title }>{section.title}</Text>;
+
   const contactsByLetter = props.contacts.sort((a, b) => { return a.name > b.name ? 1 : -1 }).reduce((obj, contact) => {
     const firstLetter = contact.name[0].toUpperCase();
     return {
@@ -40,13 +55,3 @@ SectionListContacts.propTypes = {
 };
 
 export default SectionListContacts;
-
-const styles = StyleSheet.create({
-  title: {
-    flex: 1,
-    textAlign: "center",
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "tomato",
-  },
-});

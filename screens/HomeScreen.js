@@ -8,9 +8,10 @@ import AddContactScreen from "./AddContactScreen";
 import ContactListScreen from "./ContactListScreen";
 import ContactDetailsScreen from "./ContactDetailsScreen";
 
-import { LogoTitle, SplashScreen } from "../components"
+import { LogoTitle, SplashScreen, Masthead } from "../components"
 import { UserContext } from "../contexts/UserProvider"
 import { DataContext } from "../contexts/DataProvider"
+import { ThemeContext } from "../contexts/ThemeProvider"
 
 import { 
   HeaderButtons, 
@@ -21,13 +22,11 @@ import {
   OverflowMenuProvider 
 } from 'react-navigation-header-buttons';
 
-const Masthead = (props) => (
-  <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
-);
 const HomeStack = createStackNavigator();
 
 export default function HomeScreen({ navigation }) {
 
+  const { theme } = useContext(ThemeContext)
   const { menu } = useContext(UserContext);
 
   const { 
@@ -42,14 +41,15 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <HomeStack.Navigator
+      style={{ backgroundColor: "green"}}
       screenOptions={{
         headerShown: true,
         headerTitle: props => <LogoTitle {...props} />,
         headerTitleAlign: "center",
         headerStyle: {
-          backgroundColor: 'white',
+          backgroundColor: theme.headerBackgroundColor,
         },
-        headerTintColor: 'grey',
+        headerTintColor: theme.headerTintColor,
         headerTitleStyle: {
           fontWeight: 'bold',
         },
@@ -58,7 +58,7 @@ export default function HomeScreen({ navigation }) {
             <Item title="Add" iconName="plus" onPress={() => navigation.push("AddContact")} />
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
-              OverflowIcon={<Icon name="account" size={32} color="grey" />}
+              OverflowIcon={<Icon name="account" size={32} color={theme.iconColor} />}
             >
               <HiddenItem title="Add" onPress={() => navigation.push("AddContact") }/>
               <HiddenItem title="Delete" onPress={deleteContacts} />
@@ -68,7 +68,7 @@ export default function HomeScreen({ navigation }) {
             </OverflowMenu>
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
-              OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+              OverflowIcon={<Icon name="menu" size={32} color={theme.iconColor} />}
             >
               <HiddenItem title="Text" onPress={smsContacts} />
               <HiddenItem title="Clear" onPress={reloadContacts} />
