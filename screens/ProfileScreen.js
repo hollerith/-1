@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
+import { Alert, Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
 
 import { LogoTitle, SplashScreen, Masthead } from "../components"
 import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons';
@@ -8,16 +8,31 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { ThemeContext } from "../contexts/ThemeProvider"
 import { UserContext } from "../contexts/UserProvider"
 
-export default function LoginScreen({route, navigation}) {
+export default function SignUpScreen({route, navigation}) {
+
+  const { banner } = route.params
+  const initialPassword = ( banner == "Register" ? "P455w0rd." : "")
   const { theme } = useContext(ThemeContext)
   const { user, menu } = useContext(UserContext)
 
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState('P455w0rd.');
+  const [username, setUsername] = useState(( banner == "Register" ? "" : user.username))
+  const [oldpass, setOldPass] = useState(initialPassword);
+  const [password, setPassword] = useState(initialPassword);
 
   const onPress = () => {
     console.log(`Sign up with ${username}`);
-    menu.signUp({ username, password });
+    if (username !== user.username) {
+      menu.changeUser({ username: username })
+      Alert.alert(`Username changed to ${username}\nPlease login`)
+    } 
+
+    if (oldpass && password) {
+      menu.changePass({ oldpass: oldpass, password: password})
+    } else {
+      if (oldpass || password) {
+        Alert.alert('Please enter both OLD password and desired NEW password') 
+      }
+    }
   }
 
   const isSignout = user.isSignout;
@@ -39,8 +54,7 @@ export default function LoginScreen({route, navigation}) {
       borderRadius: 3,
     },
     password: {
-      marginTop: 10,
-      marginVertical: 50,
+//      marginTop: 10,
     }
   });
 
@@ -59,7 +73,7 @@ export default function LoginScreen({route, navigation}) {
       <HeaderButtons HeaderButtonComponent={Masthead}>
         <OverflowMenu
           style={{ marginHorizontal: 10 }}
-          OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+          OverflowIcon={<Icon name="menu" size={32} color={theme.inactiveTintColor} />}
         >
           <HiddenItem title="Sign In" onPress={() => navigation.navigate('LoginScreen')} />
         </OverflowMenu>
@@ -72,7 +86,7 @@ export default function LoginScreen({route, navigation}) {
     <ScrollView style={{padding: 20, backgroundColor: theme.backgroundColor}}>
       <Text 
           style={ styles.banner }>
-          Register
+          { banner || "Register" }
       </Text>
       <View style={{margin:20}} />
       <TextInput
@@ -81,14 +95,24 @@ export default function LoginScreen({route, navigation}) {
         onChangeText={setUsername}
         style={ styles.textinput }
       />
+      <View style={{ margin:5 }}/>
       <TextInput
-        placeholder="Password"
+        placeholder={ banner == 'Register' ? "Password" : "Old password" }
+        value={oldpass}
+        onChangeText={setOldPass}
+        secureTextEntry
+        style={[styles.textinput, styles.password ]}
+      />
+      <View style={{ margin:5 }}/>
+      <TextInput
+        placeholder={ banner == 'Register' ? "Confirm Password" : "New password" }
         value={password}
         onChangeText={setPassword}
         secureTextEntry
-        style={[styles.textinput , styles.password ]}
+        style={[styles.textinput, styles.password ]}
       />
-      <Button title="Sign Up" onPress={ onPress } />
+      <View style={{ margin:5 }}/>
+      <Button title={ banner == 'Register' ? "Sign Up" : "Save"}  onPress={ onPress } />
     </ScrollView>
   );
 }

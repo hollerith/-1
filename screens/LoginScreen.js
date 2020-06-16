@@ -19,6 +19,7 @@ export default function LoginScreen({route, navigation}) {
 
   const onPress = () => {
     console.log(`Sign in with ${username}`);
+    menu.setIsLoading()
     menu.signIn({ username, password });
   }
 
@@ -29,7 +30,7 @@ export default function LoginScreen({route, navigation}) {
       fontSize: 48, 
       fontFamily: theme.bannerFontFamily,
       textAlign: "center",
-      color: theme.activeTintColor
+      color: theme.bannerColor
     },
     textinput: {
       fontSize: 24, 

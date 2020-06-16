@@ -5,10 +5,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import SendIntentAndroid from 'react-native-send-intent'
 import Clipboard from "@react-native-community/clipboard"
 
+import { ThemeContext } from "../contexts/ThemeProvider"
 import { UserContext } from "../contexts/UserProvider"
-import SettingsForm from "../components/SettingsForm"
 
-import { LogoTitle, SplashScreen } from "../components"
+import SettingsForm from "../components/SettingsForm"
+import ProfileScreen from "../screens/ProfileScreen"
+import ThemesForm from "../components/SelectTheme"
+
+import { LogoTitle, SplashScreen, Masthead } from "../components"
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import {
   HeaderButtons,
@@ -21,14 +25,13 @@ import {
 
 const Stack = createStackNavigator();
 
-const MastHead = (props) => (
-  <HeaderButton {...props} IconComponent={Icon} iconSize={32} color="grey" />
-);
-
 export default function SettingsScreen({ navigation }) {
 
+  const { theme } = useContext(ThemeContext);
   const { menu } = useContext(UserContext);
-  const onPress = () => { navigation.push('AddContact') };
+
+  const onProfile = () => { navigation.push('Profile') };
+  const onThemes = () => { navigation.push('Themes') };
 
   return (
     <Stack.Navigator
@@ -37,19 +40,21 @@ export default function SettingsScreen({ navigation }) {
         headerTitle: props => <LogoTitle {...props} />,
         headerTitleAlign: "center",
         headerStyle: {
-          backgroundColor: 'white',
+          backgroundColor: theme.headerBackgroundColor,
         },
-        headerTintColor: 'grey',
+        headerTintColor: theme.headerTintColor,
         headerTitleStyle: {
           fontWeight: 'bold',
         },
         headerRight: () => (
-          <HeaderButtons HeaderButtonComponent={MastHead}>
+          <HeaderButtons HeaderButtonComponent={Masthead}>
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
-              OverflowIcon={<Icon name="menu" size={32} color="grey" />}
+              OverflowIcon={<Icon name="menu" size={32} color={ theme.iconColor } />}
             >
-              <HiddenItem title="Bunco" onPress={() => alert('Bunco')} />
+              <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
+              <HiddenItem title="Profile" onPress={onProfile} />
+              <HiddenItem title="Themes" onPress={onThemes} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
@@ -57,6 +62,8 @@ export default function SettingsScreen({ navigation }) {
       }}
     >
       <Stack.Screen name="Settings" component={SettingsForm} options={{title: 'Settings'}} />
+      <Stack.Screen name="Themes" component={ThemesForm} options={{title: 'Themes'}} />
+      <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ banner: "Profile"}} options={{title: 'Profile'}} />
     </Stack.Navigator>
   );
 }

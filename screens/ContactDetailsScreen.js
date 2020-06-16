@@ -59,12 +59,6 @@ export default function ContactDetailsScreen({ route, navigation }) {
       justifyContent: "center",
       flex: 1
     },
-    banner: {
-      fontSize: 36,
-      fontFamily: theme.bannerFontFamily,
-      textAlign: "center",
-      color: theme.activeTintColor
-    },
     textinput: {
       fontSize: 24,
       borderWidth: 1,
@@ -115,7 +109,7 @@ export default function ContactDetailsScreen({ route, navigation }) {
   })
 
   return (
-    <ScrollView style={{padding: 20, flex: 1}}>
+    <ScrollView style={{padding: 20, flex: 1, backgroundColor: theme.backgroundColor}}>
       <TextInput
         style={ styles.textinput }
         value={state.name}

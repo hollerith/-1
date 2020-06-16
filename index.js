@@ -7,7 +7,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import SettingsScreen from "./screens/SettingsScreen";
 import LoginScreen from "./screens/LoginScreen";
-import SignUpScreen from "./screens/SignUpScreen";
+import ProfileScreen from "./screens/ProfileScreen";
 import HomeScreen from "./screens/HomeScreen";
 
 import AsyncStorage from '@react-native-community/async-storage'
@@ -45,6 +45,7 @@ function BottomTabs({ route, navigation }){
         })}
         tabBarOptions={{
           activeTintColor: theme.activeTintColor,
+          activeBackgroundColor: theme.activeBackgroundColor,
           inactiveTintColor: theme.inactiveTintColor,
           inactiveBackgroundColor: theme.inactiveBackgroundColor,
           style: { height: 56 }
@@ -68,7 +69,7 @@ function Main({ route, navigation }){
         : user.userToken == null // No token found, user isn't signed in
           ? user.username
             ? (<Stack.Screen name="SignIn" component={ LoginScreen } />) 
-            : (<Stack.Screen name="SignUp" component={ SignUpScreen } />)
+            : (<Stack.Screen name="SignUp" component={ ProfileScreen } />)
           : (<Stack.Screen name="BottomTabs" component={ BottomTabs } options={{ headerShown: false }} />) 
       }
     </Stack.Navigator>

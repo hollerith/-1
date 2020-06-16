@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import AsyncStorage from '@react-native-community/async-storage';
+import { ThemeContext } from "../contexts/ThemeProvider";
 import { DataContext } from "../contexts/DataProvider";
 
 import {
@@ -15,7 +16,8 @@ const phoneno = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/im
 
 const AddContactForm = ({ navigation }) => {
 
-  const { addContact } = useContext(DataContext);
+  const { theme } = useContext(ThemeContext)
+  const { addContact } = useContext(DataContext)
 
   const [state, setState] = useState({
     name: "",
@@ -47,6 +49,27 @@ const AddContactForm = ({ navigation }) => {
     setState({...state, [key]: val });
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      justifyContent: "center",
+      flex: 1,
+      backgroundColor: theme.backgroundColor
+    },
+    textinput: {
+      fontSize: 24,
+      borderWidth: 1,
+      borderColor: theme.borderColor,
+      minWidth: 100,
+      paddingHorizontal: 10,
+      paddingVertical: 5,
+      marginVertical: 10,
+      borderRadius: 3,
+    },
+    text: {
+      textAlign: "center"
+    }
+  });
+
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -67,6 +90,7 @@ const AddContactForm = ({ navigation }) => {
         />
         <View style={{ margin: 20 }}/>
         <Button
+          style={{ color: theme.selectedColor }}
           title="Submit"
           onPress={onPress}
           disabled={!state.isFormValid}
@@ -77,30 +101,4 @@ const AddContactForm = ({ navigation }) => {
 };
 
 export default AddContactForm;
-
-const styles = StyleSheet.create({
-  container: {
-    justifyContent: "center",
-    flex: 1
-  },
-  banner: {
-    fontSize: 36,
-    fontFamily: "Lobster-Regular",
-    textAlign: "center",
-    color: "tomato"
-  },
-  textinput: {
-    fontSize: 24,
-    borderWidth: 1,
-    borderColor: 'lightgrey',
-    minWidth: 100,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginVertical: 10,
-    borderRadius: 3,
-  },
-  text: {
-    textAlign: "center"
-  }
-});
 

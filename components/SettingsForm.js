@@ -10,7 +10,7 @@ import {
   Text, 
   TextInput, 
   TouchableOpacity,
-  View 
+  View
 } from "react-native"
 
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
@@ -21,7 +21,7 @@ import { UserContext } from "../contexts/UserProvider"
 import { ThemeContext } from "../contexts/ThemeProvider"
 
 
-function SettingsForm({ route, navigaton }) {
+function SettingsForm({ route, navigation }) {
 
   const { theme } = useContext(ThemeContext)
   const { user, menu } = useContext(UserContext);
@@ -29,6 +29,8 @@ function SettingsForm({ route, navigaton }) {
   const [account, setAccount] = useState({ name: user.username, isValid: true })
   const [phone, setPhone] = useState({ phone: "07738170000" })
   const [voicemail, setVoiceMail] = useState({ voicemail: "07738172222" })
+
+  const [selectedTheme, setSelectedTheme] = useState("ScreamOfTomato")
 
   useEffect(() => {
     (async () => {
@@ -71,7 +73,7 @@ function SettingsForm({ route, navigaton }) {
       fontSize: 36,
       fontFamily: theme.bannerFontFamily,
       textAlign: "center",
-      color: theme.activeTintColor
+      color: theme.bannerColor
     },
     textinput: {
       fontSize: 22,
@@ -146,7 +148,7 @@ function SettingsForm({ route, navigaton }) {
               onPress={() => {
                 if (account.isValid) {
                   menu.changeUser({ username: account.name })
-                  Alert.alert('Changed')
+                  Alert.alert(`Changed username to ${account.name}`)
                 }
               }}>
               <Icon 
@@ -158,6 +160,19 @@ function SettingsForm({ route, navigaton }) {
                 size={36}/>
             </TouchableOpacity>
           </View>
+        </View>
+
+        <View style={styles.menuListItemBorder}>
+          <TouchableOpacity style={styles.menuListItem}
+              onPress={() => {
+                navigation.push('Themes')
+              }}>
+            <Icon style={[styles.menuListIcon, { color: "red"}]} name="palette" size={36}/> 
+            <Text 
+              style={[ styles.textinput, styles.text] }
+            >{ theme.name }</Text>
+            <Icon style={styles.menuListIcon} name="chevron-right" size={36}/>
+          </TouchableOpacity>
         </View>
 
         <Setting 
