@@ -26,30 +26,25 @@ export default function ContactDetailsScreen({ route, navigation }) {
   const [state, setState] = useState({ name: name, phone: phone})
 
   const onPressCall = () => {
-    console.log("ContactDetailsScreen::onPressCall")
     callContact({ phone });
     navigation.navigate('ContactList')
   }
 
   const onPressText = () => {
-    console.log("ContactDetailsScreen::onPressText")
     smsContact({ phone });
     navigation.navigate('ContactList')
   }
 
   const onPressDelete = () => {
-    console.log("ContactDetailsScreen::onPressDelete")
     deleteContacts({ id });
     navigation.navigate('ContactList')
   }
 
   const onPressSignOut = () => {
-    console.log("ContactDetailsScreen::onPressSignOut")
     menu.signOut()
   }
 
   const onPressSave = () => {
-    console.log("ContactDetailsScreen::onPressSave")
     saveContact({ id: id, name: state.name, phone: state.phone})
     navigation.navigate('ContactList')
   }
@@ -61,6 +56,7 @@ export default function ContactDetailsScreen({ route, navigation }) {
     },
     textinput: {
       fontSize: 24,
+      color: theme.textColor,
       borderWidth: 1,
       borderColor: theme.borderColor,
       minWidth: 100,
@@ -73,11 +69,6 @@ export default function ContactDetailsScreen({ route, navigation }) {
       textAlign: "center"
     }
   });
-
-  useEffect(() => {
-    console.log(`ContactDetailsScreen::On first render `);
-    console.log(`  ~> route.params -${JSON.stringify(route.params)}`);
-  }, []);
 
   navigation.setOptions({
     title: '',

@@ -17,12 +17,13 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from '@react-native-community/async-storage';
 import SendIntentAndroid from 'react-native-send-intent'
 
+import { DataContext } from "../contexts/DataProvider"
 import { UserContext } from "../contexts/UserProvider"
 import { ThemeContext } from "../contexts/ThemeProvider"
 
-
 function SettingsForm({ route, navigation }) {
 
+  const { heartbeat } = useContext(DataContext)
   const { theme } = useContext(ThemeContext)
   const { user, menu } = useContext(UserContext);
 
@@ -32,36 +33,44 @@ function SettingsForm({ route, navigation }) {
 
   const [selectedTheme, setSelectedTheme] = useState("ScreamOfTomato")
 
+  const getPhoneNumber = async () => {
+    // Show own phone number
+    const phoneNumber = await SendIntentAndroid.getPhoneNumber()
+    if (!phoneNumber) {
+      Alert.alert("Can`t get phoneNumber")
+      return
+    } else {
+      setPhone(phoneNumber)
+    }  
+  }
+
+  const getVoiceMail = async () => {
+    // Show voicemail number
+    const voiceMailNumber = await SendIntentAndroid.getVoiceMailNumber()
+    if (!voiceMailNumber) {
+      Alert.alert("Can`t get voiceMailNumber")
+    } else {
+      setVoiceMail(voiceMailNumber)
+    }    
+  }
+
   useEffect(() => {
-    (async () => {
-
-      const granted = PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE, {
-        'title': 'Permissions to read phone number',
-        'message': 'This app would like to read phone state.',
-        'buttonPositive': 'Allow'
-      })
-
-      if (granted) {
-        // Show own phone number
-        const phoneNumber = await SendIntentAndroid.getPhoneNumber()
-        if (!phoneNumber) {
-          return console.error("Can`t get phoneNumber");
-        } else {
-          console.log(`Read phone state : phone ${phoneNumber}`)
-          setPhone(phoneNumber)
+    
+    // Ask for permissions to read phone numbers
+    const getPermissions = async () => {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_PHONE_STATE).then(
+        (granted) => {
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            getPhoneNumber()
+            getVoiceMail()
+          } else {
+            Alert.alert(`READ_PHONE_STATE :: ${JSON.stringify(granted)}`)
+          }            
         }
+      )
+    }
 
-        // Show voicemail number
-        const voiceMailNumber = await SendIntentAndroid.getVoiceMailNumber()
-        if (!voiceMailNumber) {
-          return console.error("Can`t get voiceMailNumber");
-        } else {
-          console.log(`Read phone state : voicemail ${voiceMailNumber}`)
-          setVoiceMail(voiceMailNumber)
-        }
-      }
-
-    })();
+    getPermissions()
   }, []);
 
   const styles = StyleSheet.create({
@@ -135,31 +144,16 @@ function SettingsForm({ route, navigation }) {
       </Text>
       <View style={{ flex: 1}}>
         <View style={styles.menuListItemBorder}>
-          <View style={styles.menuListItem}>
-            <Icon style={[styles.menuListIcon, { color: "black"}]} name="account" size={36}/>
-            <TextInput 
-              style={[ styles.textinput, styles.text] }
-              onChangeText={ (value) => { 
-                if (value.length > 0) return setAccount({ name: value, isValid: true}) 
-                return setAccount({ name: value, isValid: false}) 
-              }}
-            >{ account.name }</TextInput>
-            <TouchableOpacity 
+          <TouchableOpacity style={styles.menuListItem}
               onPress={() => {
-                if (account.isValid) {
-                  menu.changeUser({ username: account.name })
-                  Alert.alert(`Changed username to ${account.name}`)
-                }
+                navigation.push('Profile')
               }}>
-              <Icon 
-                name="check-circle" 
-                style={[
-                  styles.menuListIcon, 
-                  { color: account.isValid ? "green" : theme.inactiveTintColor } 
-                ]} 
-                size={36}/>
-            </TouchableOpacity>
-          </View>
+            <Icon style={[styles.menuListIcon, { color: theme.activeHintColor}]} name="account" size={36}/> 
+            <Text 
+              style={[ styles.textinput, styles.text] }
+            >{ account.name }</Text>
+            <Icon style={styles.menuListIcon} name="chevron-right" size={36}/>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.menuListItemBorder}>
@@ -181,7 +175,6 @@ function SettingsForm({ route, navigation }) {
           label="Call Voicemail"
           hint={`${voicemail}`}
           onPress={() => {
-            console.log(voicemail)
             SendIntentAndroid.sendPhoneCall(voicemail);
           }}
         />
@@ -199,6 +192,14 @@ function SettingsForm({ route, navigation }) {
             });
           }}
         />
+
+        <Setting 
+          icon="clock" 
+          iconColor="purple"
+          label="Current timestamp"
+          hint={`${heartbeat}`}
+        />
+
       </View>
     </ScrollView>
   );

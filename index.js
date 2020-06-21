@@ -24,6 +24,12 @@ const Stack = createStackNavigator()
 const HomeStack = createStackNavigator();
 const BottomTab = createBottomTabNavigator();
 
+function currentTimestamp(): string {
+  const d = new Date()
+  const z = n => n.toString().length == 1 ? `0${n}` : n // Zero pad
+  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`
+}
+
 function BottomTabs({ route, navigation }){
 
   const { theme } = useContext(ThemeContext);
@@ -65,11 +71,11 @@ function Main({ route, navigation }){
   return (
     <Stack.Navigator>
       {user.isLoading // We haven't finished checking for the token yet
-        ? (<Stack.Screen name="Splash" component={SplashScreen} />) 
+        ? (<Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: true, headerTitle: "Loading wzpr..."}} />) 
         : user.userToken == null // No token found, user isn't signed in
           ? user.username
             ? (<Stack.Screen name="SignIn" component={ LoginScreen } />) 
-            : (<Stack.Screen name="SignUp" component={ ProfileScreen } />)
+            : (<Stack.Screen name="SignUp" component={ ProfileScreen } initialParams={{ banner: "Register"}} />)
           : (<Stack.Screen name="BottomTabs" component={ BottomTabs } options={{ headerShown: false }} />) 
       }
     </Stack.Navigator>
@@ -77,7 +83,7 @@ function Main({ route, navigation }){
 }
 
 export default function App() {
-  
+
   return (
     <ThemeProvider>
       <UserProvider>

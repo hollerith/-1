@@ -11,7 +11,6 @@ export default function ContactListScreen ({ navigation }) {
 
   const handleCheckContact = contact => {
     checkContact(contact)
-    console.log(`Checked ${JSON.stringify(contact)}`)
   };
 
   const handleSelectContact = contact => {

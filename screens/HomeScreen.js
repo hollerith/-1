@@ -35,6 +35,7 @@ export default function HomeScreen({ navigation }) {
     deleteContacts, 
     syncData, 
     loadData, 
+    sendSMS, 
     smsContacts, 
     msgContact 
   } = useContext(DataContext);
@@ -70,6 +71,7 @@ export default function HomeScreen({ navigation }) {
               style={{ marginHorizontal: 10 }}
               OverflowIcon={<Icon name="menu" size={32} color={theme.iconColor} />}
             >
+              <HiddenItem title="TEST" onPress={sendSMS} />
               <HiddenItem title="Text" onPress={smsContacts} />
               <HiddenItem title="Clear" onPress={reloadContacts} />
               <HiddenItem title="Share" onPress={msgContact} />

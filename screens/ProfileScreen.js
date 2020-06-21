@@ -20,14 +20,27 @@ export default function SignUpScreen({route, navigation}) {
   const [password, setPassword] = useState(initialPassword);
 
   const onPress = () => {
-    console.log(`Sign up with ${username}`);
+
+    menu.setIsLoading()
+
+    if (banner == 'Register') {
+      if (oldpass == password) {
+        menu.signUp({ username: username, oldpass: oldpass, password: password})
+      } else {
+        Alert.alert('Passwords are not the same!')         
+      }
+      return
+    }
+
     if (username !== user.username) {
       menu.changeUser({ username: username })
       Alert.alert(`Username changed to ${username}\nPlease login`)
     } 
 
     if (oldpass && password) {
-      menu.changePass({ oldpass: oldpass, password: password})
+      if (banner != 'Register') {
+        menu.changePass({ username: username, oldpass: oldpass, password: password})
+      }
     } else {
       if (oldpass || password) {
         Alert.alert('Please enter both OLD password and desired NEW password') 
@@ -59,6 +72,7 @@ export default function SignUpScreen({route, navigation}) {
   });
 
   navigation.setOptions({ 
+    headerShown: banner == "Register" ? false : true,
     title: '',
     headerTitle: props => <LogoTitle {...props} />,
     headerTitleAlign: "center",
@@ -75,7 +89,7 @@ export default function SignUpScreen({route, navigation}) {
           style={{ marginHorizontal: 10 }}
           OverflowIcon={<Icon name="menu" size={32} color={theme.inactiveTintColor} />}
         >
-          <HiddenItem title="Sign In" onPress={() => navigation.navigate('LoginScreen')} />
+          <HiddenItem title="Sign Out" onPress={() => menu.signOut() } />
         </OverflowMenu>
       </HeaderButtons>
     ),
@@ -90,7 +104,7 @@ export default function SignUpScreen({route, navigation}) {
       </Text>
       <View style={{margin:20}} />
       <TextInput
-        placeholder="Username"
+        placeholder={ banner == 'Register' ? "Username" : "Change username" }
         value={username}
         onChangeText={setUsername}
         style={ styles.textinput }

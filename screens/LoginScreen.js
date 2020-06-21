@@ -18,7 +18,6 @@ export default function LoginScreen({route, navigation}) {
   const [password, setPassword] = useState('P455w0rd.')
 
   const onPress = () => {
-    console.log(`Sign in with ${username}`);
     menu.setIsLoading()
     menu.signIn({ username, password });
   }
@@ -64,7 +63,9 @@ export default function LoginScreen({route, navigation}) {
           style={{ marginHorizontal: 10 }}
           OverflowIcon={<Icon name="menu" size={32} color={theme.iconColor} />}
         >
-          <HiddenItem title="Register" onPress={() => navigation.navigate('SignUp')} />
+          <HiddenItem title="About" onPress={() => {
+            Alert.alert("wzpr Version 0.01", "Simple Secret Contacts app with timed SMS and fast wipe")
+          }}/>
         </OverflowMenu>
       </HeaderButtons>
     ),

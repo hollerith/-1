@@ -22,11 +22,8 @@ export const hexToRgb = (hex) => {
     : null;
 };
 
-const logState = (title, data) => {
-  console.log(` ::      ${title}`);
-  console.log(JSON.stringify(data));
-  console.log(` ::      `);
+export function currentTimestamp(): string {
+  const d = new Date()
+  const z = n => n.toString().length == 1 ? `0${n}` : n // Zero pad
+  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`
 }
-
-export { logState }
-

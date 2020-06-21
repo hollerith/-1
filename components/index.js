@@ -14,7 +14,7 @@ const Masthead = (props) => {
 function SplashScreen() {
   return (
     <>
-      <ImageBackground style={{ width: 550, height: 550 }} resizeMode='cover' source={require('../assets/tomatocream.gif')}/>
+      <ImageBackground style={{ width: 600, height: 600 }} resizeMode='cover' source={require('../assets/tomatocream.gif')}/>
     </>
   );
 }

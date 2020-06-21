@@ -50,7 +50,7 @@ const UserProvider = props => {
           return {
             ...prevState,
             isLoading: false,
-            username: "",
+            username: action.username,
           }
         case 'IS_LOADING':
           return {
@@ -71,21 +71,20 @@ const UserProvider = props => {
   useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
-      console.log('\x1b[33m Booting::\x1b[34mUser Context\x1b[0m')
       let userToken, account
       try {
-        userToken = await AsyncStorage.getItem("userToken")
-        console.log(`\x1b[33m Booting::\x1b[36m${userToken}\x1b[0m`)
-        if (userToken) {
-          account = JSON.parse(await AsyncStorage.getItem("account"))
-          console.log(`\x1b[33m Booting::\x1b[35m${account.login}\x1b[0m`)
-          dispatch({ type: 'RESTORE_TOKEN', token: userToken, username: account.login })
-        } else {
-          dispatch({ type: 'FAIL_TOKEN' })
+        account = JSON.parse(await AsyncStorage.getItem("@wzpr:account"))
+        if (account) {
+          userToken = await AsyncStorage.getItem("@wzpr:userToken")
+          if (userToken) {
+            return dispatch({ type: 'RESTORE_TOKEN', token: userToken, username: account.login})
+          } else {
+            return dispatch({ type: 'FAIL_TOKEN', username: account.login})
+          }
         }
+        return dispatch({ type: 'FAIL_TOKEN', username: ""})
       } catch (e) {
-        console.log(`index.js :: Restoring token failed ${e.message}`)
-        dispatch({ type: 'FAIL_TOKEN' })
+        dispatch({ type: 'FAIL_TOKEN', username: ""})
       }
     }
 
@@ -97,10 +96,9 @@ const UserProvider = props => {
     () => ({
       signIn: async (input) => {
         // TODO: validate login details
-        const account = JSON.parse(await AsyncStorage.getItem('account'))
-        console.log(`Login : ${account.login}`)
+        const account = JSON.parse(await AsyncStorage.getItem('@wzpr:account'))
         if (input.username == account.login && bcrypt.compareSync(input.password, account.userhash)) {
-          await AsyncStorage.setItem("userToken", "dummy-auth-token");
+          await AsyncStorage.setItem("@wzpr:userToken", "dummy-auth-token");
           dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', username: account.login });
         } else {
           Alert.alert('Wrong user or bad password')
@@ -117,26 +115,27 @@ const UserProvider = props => {
         if (input.oldpass == input.password) {
           const salt = bcrypt.genSaltSync(10);
           const hash = bcrypt.hashSync(input.password, salt);
-          dispatch({ type: 'SIGN_UP', username: input.username, userhash: hash });
-          await AsyncStorage.setItem("account", JSON.stringify({ login: input.username, userhash: hash}));
+          dispatch({ type: 'SIGN_UP', username: input.username });
+          await AsyncStorage.setItem("@wzpr:account", JSON.stringify({ login: input.username, userhash: hash}));
+          dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', username: input.username });
         } else {
           Alert.alert(`Passwords don\'t match:\n`)
         }
       },
       changeUser: async input => {
         dispatch({ type: 'SIGN_UP', username: input.username });
-        const account = JSON.parse(await AsyncStorage.getItem('account'))
-        await AsyncStorage.setItem("account", JSON.stringify({ ...account, login: input.username}));
+        const account = JSON.parse(await AsyncStorage.getItem('@wzpr:account'))
+        await AsyncStorage.setItem("@wzpr:account", JSON.stringify({ ...account, login: input.username}));
       },
       changePass: async input => {
-        const account = JSON.parse(await AsyncStorage.getItem('account'))
+        const account = JSON.parse(await AsyncStorage.getItem('@wzpr:account'))
         if (input.username == account.login && bcrypt.compareSync(input.oldpass, account.userhash)) {
           const salt = bcrypt.genSaltSync(10);
           const hash = bcrypt.hashSync(input.password, salt);
           dispatch({ type: 'SIGN_UP', username: input.username, userhash: hash });
-          await AsyncStorage.setItem("account", JSON.stringify({ ...account, userhash: hash}));
+          await AsyncStorage.setItem("@wzpr:account", JSON.stringify({ ...account, userhash: hash}));
         } else {
-          Alert.alert('Enter current password')
+          Alert.alert(`Enter current password`)
         }
       },
     }),

@@ -63,7 +63,6 @@ function ThemesForm({ route, navigation }) {
   })
 
   useEffect(() => {
-    console.log(state.value)
     changeTheme(state.value)
   }, [state])
 

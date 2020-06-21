@@ -26,7 +26,6 @@ const AddContactForm = ({ navigation }) => {
   });
 
   useEffect(() => {
-    console.log(`On change state.name or state.phone ${JSON.stringify(state)}`);
     validateForm();
   }, [state.name, state.phone]);
 
