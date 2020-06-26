@@ -16,6 +16,7 @@ import {
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AsyncStorage from '@react-native-community/async-storage';
 import SendIntentAndroid from 'react-native-send-intent'
+import BackgroundTimer from 'react-native-background-timer'
 
 import { DataContext } from "../contexts/DataProvider"
 import { UserContext } from "../contexts/UserProvider"
@@ -28,8 +29,8 @@ function SettingsForm({ route, navigation }) {
   const { user, menu } = useContext(UserContext);
 
   const [account, setAccount] = useState({ name: user.username, isValid: true })
-  const [phone, setPhone] = useState({ phone: "07738170000" })
-  const [voicemail, setVoiceMail] = useState({ voicemail: "07738172222" })
+  const [phone, setPhone] = useState({ phone: "disabled" })
+  const [voicemail, setVoiceMail] = useState({ voicemail: "disabled" })
 
   const [selectedTheme, setSelectedTheme] = useState("ScreamOfTomato")
 
@@ -196,8 +197,11 @@ function SettingsForm({ route, navigation }) {
         <Setting 
           icon="clock" 
           iconColor="purple"
-          label="Current timestamp"
+          label="Suspend Jobs"
           hint={`${heartbeat}`}
+          onPress={() => {
+            navigation.navigate("Jobs")
+          }}          
         />
 
       </View>

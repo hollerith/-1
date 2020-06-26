@@ -17,13 +17,17 @@ const Masthead = (props) => {
 }
 
 export default function ContactDetailsScreen({ route, navigation }) {
-  const { id, name, phone, checked } = route.params;
 
+  const { id, name, phone, checked } = route.params
   const { theme } = useContext(ThemeContext)
-  const { user, isSignout, menu } = useContext(UserContext);
-  const { deleteContacts, saveContact, callContact, smsContact } = useContext(DataContext);
+  const { user, isSignout, menu } = useContext(UserContext)
+  const { deleteContacts, saveContact, callContact, smsContact } = useContext(DataContext)
 
   const [state, setState] = useState({ name: name, phone: phone})
+
+  const onPressSMS = () => {
+    navigation.navigate('SendMessage', { id, name, phone, checked });
+  };
 
   const onPressCall = () => {
     callContact({ phone });
@@ -91,6 +95,7 @@ export default function ContactDetailsScreen({ route, navigation }) {
         >
           <HiddenItem title="Call" onPress={onPressCall} />
           <HiddenItem title="Text" onPress={onPressText} />
+          <HiddenItem title="Schedule" onPress={onPressSMS} />
           <HiddenItem title="Delete" onPress={onPressDelete} />
           <HiddenItem title="SignOut" onPress={onPressSignOut} />
         </OverflowMenu>

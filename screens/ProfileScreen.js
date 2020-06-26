@@ -11,17 +11,19 @@ import { UserContext } from "../contexts/UserProvider"
 export default function SignUpScreen({route, navigation}) {
 
   const { banner } = route.params
-  const initialPassword = ( banner == "Register" ? "P455w0rd." : "")
+
   const { theme } = useContext(ThemeContext)
   const { user, menu } = useContext(UserContext)
+
+  const initialPassword = ( banner == "Register" ? "P455w0rd." : "")
 
   const [username, setUsername] = useState(( banner == "Register" ? "" : user.username))
   const [oldpass, setOldPass] = useState(initialPassword);
   const [password, setPassword] = useState(initialPassword);
 
-  const onPress = () => {
+  const onPress = async () => {
 
-    menu.setIsLoading()
+    await menu.setIsLoading()
 
     if (banner == 'Register') {
       if (oldpass == password) {

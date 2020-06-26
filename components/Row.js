@@ -35,8 +35,8 @@ const Row = props => {
   return (
     <TouchableOpacity
       style={ props.checked ? styles.rowselect : styles.row }
-      onPress={() => props.onSelectContact(props)}
-      onLongPress={() => props.onCheckContact(props)}
+      onLongPress={() => props.onSelectContact(props)}
+      onPress={() => props.onCheckContact(props)}
     >
       <Text style={ props.checked ? styles.selected : styles.text }>{props.name}</Text>
       <Text style={ props.checked ? styles.selected : styles.text }>{props.phone}</Text>

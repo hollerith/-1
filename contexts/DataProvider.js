@@ -2,26 +2,10 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 import {Alert, Linking, PermissionsAndroid, NativeModules} from 'react-native'
 import PropTypes from "prop-types";
 import AsyncStorage from '@react-native-community/async-storage'
-import { UserContext } from "../contexts/UserProvider"
 import testdata from "../utils/contacts"
 import Contacts from 'react-native-contacts';
 import SendIntentAndroid from 'react-native-send-intent'
-import BackgroundTask from 'react-native-background-task'
-
-function currentTimestamp(): string {
-  const d = new Date()
-  const z = n => n.toString().length == 1 ? `0${n}` : n // Zero pad
-  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`
-}
-
-BackgroundTask.define(
-  async () => {
-    console.log('Hello from a background task')
-    DirectSms.sendDirectSms('07884077434', `This was sent automagically at ${currentTimestamp()}!`);
-    await AsyncStorage.setItem('@wzpr:Heartbeat', currentTimestamp())    
-    BackgroundTask.finish()
-  },
-)
+import { UserContext } from "../contexts/UserProvider"
 
 const DirectSms = NativeModules.DirectSms
 
@@ -32,6 +16,7 @@ const DataProvider = props => {
   const { user, menu } = useContext(UserContext);
 
   const [heartbeat, setHeartbeat] = useState({ heartbeat: null })
+  const [jobs, setJobs] = useState({ jobs: [] })
   const [contacts, setContacts] = useState({ contacts: [] })
   const [isLoading, setLoading] = useState({ isLoading: false })
 
@@ -40,15 +25,8 @@ const DataProvider = props => {
     (async () => {
       const data = await AsyncStorage.getItem('@wzpr:Contacts');
       setContacts(JSON.parse(data) || []);
-      BackgroundTask.schedule()
-      checkStatus()
     })();
   }, []);
-
-  const checkStatus = async () => {
-    const status = await BackgroundTask.statusAsync()
-    console.log(`backgrounded ${status.available}`)
-  }
 
   // isLoading 
   useEffect(() => {
@@ -59,6 +37,10 @@ const DataProvider = props => {
       }
       const beat = await AsyncStorage.getItem('@wzpr:Heartbeat')
       setHeartbeat(beat)
+
+      const jobs = JSON.parse(await AsyncStorage.getItem('@wzpr:Jobs') || [])
+      setJobs(jobs)
+
     })();
   }, [isLoading]);
 
@@ -69,11 +51,13 @@ const DataProvider = props => {
     setLoading(!isLoading);
   }
 
-  const sendSMS = () => {
+  const sendSMS = (contact, message) => {
+    const to = contact ? [contact.phone] : contacts.filter(i => i.checked ).map(i => i.phone)
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.SEND_SMS).then(
       () => {
-        DirectSms.sendDirectSms('07884077434', 'I am testing your feature! This was sent automagically!');
+        DirectSms.sendDirectSms(to.toString(), message);
       })
+    setLoading(!isLoading);
   }
  
   const syncData = () => {
@@ -86,7 +70,8 @@ const DataProvider = props => {
             // contacts returned in Array
             let newContacts = []
             incoming.forEach((ct) => {
-              newContacts.push({id: new Date().getTime().toString(), name: ct.givenName, phone: ct.phoneNumbers[0].number})
+              console.log(JSON.stringify(ct, null, 4))
+              newContacts.push({id: ct.recordID, name: ct.givenName, phone: ct.phoneNumbers[0].number})
             })
             AsyncStorage.setItem("@wzpr:Contacts", JSON.stringify([...contacts, ...newContacts]))
             setLoading(!isLoading)
@@ -112,6 +97,11 @@ const DataProvider = props => {
     } else {
       setContacts(merged(contacts, {id: contact.id, name: contact.name, phone: contact.phone, checked: true }))
     }
+  }
+
+  const saveJob = (job) => {
+    AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify([...jobs.filter(item => item.id !== job.id), job]));
+    setLoading(!isLoading)
   }
 
   const saveContact = (contact) => {
@@ -167,8 +157,20 @@ const DataProvider = props => {
     );
   }
 
+  const selected = () => {
+    try {
+      return contacts.filter(i => i.checked ).map(i => i.id)
+    } catch(error) {
+      return []
+    }
+  }
+
   contactsContext = {
+    jobs,
+    setJobs,
+    saveJob,
     contacts,
+    selected,
     setContacts,
     addContact,
     msgContact,

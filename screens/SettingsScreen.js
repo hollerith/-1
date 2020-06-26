@@ -1,15 +1,27 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Alert, Button, Image, PermissionsAndroid, ScrollView, StatusBar, StyleSheet, Text, TextInput, View } from "react-native";
 import { createStackNavigator } from '@react-navigation/stack';
 import AsyncStorage from '@react-native-community/async-storage';
 import SendIntentAndroid from 'react-native-send-intent'
 import Clipboard from "@react-native-community/clipboard"
+import { 
+  Alert, 
+  Button, 
+  Image, 
+  PermissionsAndroid, 
+  ScrollView, 
+  StatusBar, 
+  StyleSheet, 
+  Text, 
+  TextInput, 
+  View 
+} from "react-native";
 
 import { ThemeContext } from "../contexts/ThemeProvider"
 import { UserContext } from "../contexts/UserProvider"
 
 import SettingsForm from "../components/SettingsForm"
 import ProfileScreen from "../screens/ProfileScreen"
+import JobListScreen from "../screens/JobListScreen"
 import ThemesForm from "../components/SelectTheme"
 
 import { LogoTitle, SplashScreen, Masthead } from "../components"
@@ -32,6 +44,10 @@ export default function SettingsScreen({ navigation }) {
 
   const onProfile = () => { navigation.push('Profile') };
   const onThemes = () => { navigation.push('Themes') };
+  const onJobs = () => { 
+    console.log('Jobs')
+    navigation.push('Jobs') 
+  };
 
   return (
     <Stack.Navigator
@@ -55,6 +71,7 @@ export default function SettingsScreen({ navigation }) {
               <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
               <HiddenItem title="Profile" onPress={onProfile} />
               <HiddenItem title="Themes" onPress={onThemes} />
+              <HiddenItem title="Jobs" onPress={onJobs} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
@@ -64,6 +81,7 @@ export default function SettingsScreen({ navigation }) {
       <Stack.Screen name="Settings" component={SettingsForm} options={{title: 'Settings'}} />
       <Stack.Screen name="Themes" component={ThemesForm} options={{title: 'Themes'}} />
       <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ banner: "Profile"}} options={{title: 'Profile'}} />
+      <Stack.Screen name="Jobs" component={JobListScreen} options={{title: 'Jobs'}} />
     </Stack.Navigator>
   );
 }

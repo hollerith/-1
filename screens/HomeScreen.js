@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import AddContactScreen from "./AddContactScreen";
 import ContactListScreen from "./ContactListScreen";
 import ContactDetailsScreen from "./ContactDetailsScreen";
+import SendMessageScreen from "./SendMessageScreen";
 
 import { LogoTitle, SplashScreen, Masthead } from "../components"
 import { UserContext } from "../contexts/UserProvider"
@@ -30,6 +31,8 @@ export default function HomeScreen({ navigation }) {
   const { menu } = useContext(UserContext);
 
   const { 
+    contacts,
+    selected,
     buncoSquad, 
     reloadContacts,
     deleteContacts, 
@@ -39,6 +42,14 @@ export default function HomeScreen({ navigation }) {
     smsContacts, 
     msgContact 
   } = useContext(DataContext);
+
+  const scheduleSMS = () => { 
+    if (selected().length > 0) {
+      navigation.push("SendMessage", selected())
+    } else {
+      Alert.alert('Select some contacts to message')
+    }
+  }
 
   return (
     <HomeStack.Navigator
@@ -71,10 +82,18 @@ export default function HomeScreen({ navigation }) {
               style={{ marginHorizontal: 10 }}
               OverflowIcon={<Icon name="menu" size={32} color={theme.iconColor} />}
             >
-              <HiddenItem title="TEST" onPress={sendSMS} />
               <HiddenItem title="Text" onPress={smsContacts} />
-              <HiddenItem title="Clear" onPress={reloadContacts} />
-              <HiddenItem title="Share" onPress={msgContact} />
+              { selected().length > 0 ? 
+                <>
+                <HiddenItem title="Schedule" onPress={scheduleSMS}/>
+                <HiddenItem title="Clear" onPress={reloadContacts} />
+                <HiddenItem title="Share" onPress={msgContact} /> 
+                </> :
+                <>       
+                <HiddenItem title="Schedule" onPress={scheduleSMS} disabled/>
+                <HiddenItem title="Clear" onPress={reloadContacts} disabled />
+                <HiddenItem title="Share" onPress={msgContact} disabled /> 
+                </> }
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
@@ -84,6 +103,7 @@ export default function HomeScreen({ navigation }) {
       <HomeStack.Screen name="ContactList" component={ContactListScreen} options={{title: 'Home'}}  />
       <HomeStack.Screen name="ContactDetails" component={ContactDetailsScreen} options={{title: 'Contacts'}} />
       <HomeStack.Screen name="AddContact" component={AddContactScreen} options={{title: 'Add Contact'}} />
+      <HomeStack.Screen name="SendMessage" component={SendMessageScreen} options={{title: 'Send SMS'}} />
     </HomeStack.Navigator>
   );
 }
