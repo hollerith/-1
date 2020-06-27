@@ -18,12 +18,12 @@ const Masthead = (props) => {
 
 export default function ContactDetailsScreen({ route, navigation }) {
 
-  const { id, name, phone, checked } = route.params
+  const { id, name, phone, notes, checked } = route.params
   const { theme } = useContext(ThemeContext)
   const { user, isSignout, menu } = useContext(UserContext)
   const { deleteContacts, saveContact, callContact, smsContact } = useContext(DataContext)
 
-  const [state, setState] = useState({ name: name, phone: phone})
+  const [state, setState] = useState({ name: name, phone: phone, notes: notes})
 
   const onPressSMS = () => {
     navigation.navigate('SendMessage', { id, name, phone, checked });
@@ -49,7 +49,7 @@ export default function ContactDetailsScreen({ route, navigation }) {
   }
 
   const onPressSave = () => {
-    saveContact({ id: id, name: state.name, phone: state.phone})
+    saveContact({ id: id, name: state.name, phone: state.phone, notes: state.notes})
     navigation.navigate('ContactList')
   }
 
@@ -88,7 +88,6 @@ export default function ContactDetailsScreen({ route, navigation }) {
     headerRight: () => (
       <HeaderButtons HeaderButtonComponent={Masthead}>
          <Item title="Call" iconName="phone" onPress={onPressCall} />
-         <Item title="Del" iconName="delete" onPress={onPressDelete} />
          <OverflowMenu
           style={{ marginHorizontal: 10 }}
           OverflowIcon={<Icon name="menu" size={32} color="grey" />}
@@ -116,7 +115,19 @@ export default function ContactDetailsScreen({ route, navigation }) {
         value={state.phone}
         onChangeText={data => setState({...state, phone: data }) }
       />
-      <View style={{margin:20}} />
+      <TextInput
+        style={[ styles.textinput, { 
+          textAlign: "center", 
+          fontSize: 18,
+          fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'
+        }]}
+        value={state.notes}
+        onChangeText={data => setState({...state, notes: data }) }
+        placeholder="Enter notes"
+        multiline = {true}
+        numberOfLines = {5}
+      />
+     <View style={{margin:20}} />
       <Button title="Save" onPress={onPressSave} />
     </ScrollView>
   );

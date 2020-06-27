@@ -30,20 +30,23 @@ const addMinutes = (date, minutes) => { return new Date(date.getTime() + minutes
 
 const SendMessageScreen = ({ route, navigation }) => {
 
+  const { job } = route.params
   const { id, name, phone, checked } = route.params
+
   const { theme } = useContext(ThemeContext)
-  const { contacts, sendSMS } = useContext(DataContext)
+  const { contacts, sendSMS, jobs, setJobs, saveJob } = useContext(DataContext)
 
   const [state, setState] = useState({
-    to: phone ? phone : contacts.filter(i => i.checked ).map(i => i.phone),
-    text: "",
-    schedule: addMinutes(new Date(), 5),
-    repeat: "once",
-    isNowValid: false,
-    isLaterValid: false,
+    to: job ? job.to : phone ? phone : contacts.filter(i => i.checked ).map(i => i.phone),
+    text: job ? job.text : "",
+    schedule: job ? new Date(job.schedule) : addMinutes(new Date(), 5),
+    repeat: job ? job.repeat : "once",
     showDatePicker: false,
     showTimePicker: false
   })
+
+  const [isNowValid, setIsNowValid] = useState(false)
+  const [isLaterValid, setIsLaterValid] = useState(false)
 
   useEffect(() => {
     PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.SEND_SMS).then(() => {
@@ -55,26 +58,28 @@ const SendMessageScreen = ({ route, navigation }) => {
 
     if (state.text.length > 0) {
       if (state.schedule > (new Date())) {
-        setState({...state, isNowValid: true, isLaterValid: true })
+        setIsNowValid(true)
+        setIsLaterValid(true)
       } else {
-        setState({...state, isNowValid: true, isLaterValid: false })
+        setIsNowValid(true)
+        setIsLaterValid(false)
       }
     } else {
-      setState({...state, isNowValid: false, isLaterValid: false })
+      setIsNowValid(false)
+      setIsLaterValid(false)
     }
 
-    return (state.isNowValid || state.isLaterValid)
   };
 
   const onNow = () => {
     sendSMS(state.to, state.text)
-    navigation.navigate('ContactList')
+    navigation.navigate('Jobs')
   };
 
   const onLater = async () => {
 
-    const newJob = { 
-      id: new Date().getTime().toString(), 
+    const Job = { 
+      id: job ? job.id : new Date().getTime().toString(), 
       to: state.to, 
       text: state.text, 
       schedule: state.schedule, 
@@ -84,10 +89,13 @@ const SendMessageScreen = ({ route, navigation }) => {
 
     console.log(`\x1b[1m\x1b[33mSend SMS\x1b[31m\x1b[1m * \x1b[0m\x1b[34m${state.schedule}\x1b[0m`)
 
-    const jobs = JSON.parse(await AsyncStorage.getItem('@wzpr:Jobs')) || []
-    jobs.push(newJob)
-    await AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify(jobs))
-    navigation.navigate('ContactList')
+    saveJob(Job)
+    //const jobs = JSON.parse(await AsyncStorage.getItem('@wzpr:Jobs')) || []
+    //jobs.push(newJob)
+    //await AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify(jobs))
+    //setJobs(jobs)
+
+    navigation.navigate('Jobs')
   };
 
   const onChangeDate = (event, selectedDate) => {
@@ -131,7 +139,11 @@ const SendMessageScreen = ({ route, navigation }) => {
       <View style={{ padding: 20 }}>
         <Text style={styles.textinput}>{state.to.toString()}</Text>
         <TextInput
-          style={[ styles.textinput, { textAlign: "center", fontSize: 18 }]}
+          style={[ styles.textinput, { 
+            textAlign: "center", 
+            fontSize: 18,
+            fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace'
+          }]}
           value={state.text}
           onChangeText={getHandler('text')}
           placeholder="Enter message here"
@@ -184,16 +196,14 @@ const SendMessageScreen = ({ route, navigation }) => {
         <View style={{ margin: 5 }}/>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}} >
           <Button
-            style={{ color: theme.selectedColor }}
             title="Send Now"
             onPress={onNow}
-            disabled={!state.isNowValid}
+            disabled={!isNowValid}
           />
           <Button
-            style={{ color: 'purple' }}
             title="Send Later"
             onPress={onLater}
-            disabled={!state.isLaterValid}
+            disabled={!isLaterValid}
           />
         </View>
       </View>

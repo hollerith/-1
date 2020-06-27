@@ -7,7 +7,7 @@ import { DataContext } from "../contexts/DataProvider"
 import { ThemeContext } from "../contexts/ThemeProvider"
 
 export default function JobListScreen ({ navigation }) {
-  const { jobs, setJobs, saveJob } = useContext(DataContext);
+  const { jobs, setJobs, saveJob, deleteJob } = useContext(DataContext);
   const { theme } = useContext(ThemeContext)
 
   const styles = StyleSheet.create({
@@ -25,6 +25,10 @@ export default function JobListScreen ({ navigation }) {
     menuListIcon: {
       color: theme.menuListIconColor,
     },
+    menuListItemBorder: {
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderColor: theme.borderColor,
+    },
     text: {
       fontSize: 14,
       color: theme.textColor,
@@ -39,34 +43,35 @@ export default function JobListScreen ({ navigation }) {
   }
 
   const onDetail = (job) => {
-    navigation.navigate('SendMessage', job)
+    navigation.navigate('SendMessage', job={ job })
   }
 
-  const onDelete = (index) => {
-    jobs.splice(index, 1)
-    setJobs(JSON.stringify(jobs))
+  const onDelete = (job) => {
+    deleteJob(job)
   }
 
   function Item({ job, index }) {
     return (
       <View 
-        style={{ margin: 10, flex: 1, flexDirection: "row", justifyContent: "center"}}>
+        style={[ styles.menuListItemBorder, { margin: 10, flex: 1, flexDirection: "row", justifyContent: "center"}]}>
         <TouchableOpacity 
           style={{ flex: .3, flexDirection: "row", justifyContent: "space-between"}}
           onPress={() => onToggle(job)}>
           <Icon name="clock-outline" 
-            color={ job.disabled ? "lightgrey" : "purple" }
+            color={ job.disabled ? theme.inactiveTintColor || "lightgrey" : theme.jobTimerIcon || "purple" }
             size={36}/>
         </TouchableOpacity>
         <TouchableOpacity 
           style={{ flex: 1, flexDirection: "row", justifyContent: "space-between"}}
           onPress={() => onDetail(job)}>
-          <Text style={styles.text}>{job.to.toString()}</Text>
-          <Text style={styles.text}>{job.text}</Text>
+          <View>
+            <Text style={[styles.text, { fontWeight: "bold"}]}>{job.to.toString()}</Text>
+            <Text style={styles.text}>{job.text}</Text>
+          </View>
         </TouchableOpacity>
         <TouchableOpacity 
           style={{ flex: .3, flexDirection: "row", justifyContent: "center"}}
-          onPress={() => onDelete(index)}>
+          onPress={() => onDelete(job)}>
           <Icon name="trash-can-outline" color="orange" size={36}/>
         </TouchableOpacity>
       </View>
@@ -80,7 +85,10 @@ export default function JobListScreen ({ navigation }) {
         renderItem={({ item, index }) => <Item job={item} index={index}/>}
         keyExtractor={item => item.id}
       />
-      <Button title='Stop Jobs' onPress={() => BackgroundTimer.stopBackgroundTimer() } />
+      <View
+        style={{ padding: 20 }}>
+        <Button title='Suspend All' onPress={() => BackgroundTimer.stopBackgroundTimer() } />
+      </View>
     </SafeAreaView>
   )
 }

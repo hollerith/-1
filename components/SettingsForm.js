@@ -119,7 +119,7 @@ function SettingsForm({ route, navigation }) {
       fontSize: 20,
       fontWeight: "bold",
       color: theme.textColor,
-      backgroundColor: theme.textBackgroundColor,
+      backgroundColor: theme.backgroundColor,
     },
   });
 
@@ -130,7 +130,7 @@ function SettingsForm({ route, navigation }) {
           <Icon style={[styles.menuListIcon, { color: props.iconColor}]} name={props.icon} size={36}/>
           <View>
             <Text style={styles.menuListLabel}>{props.label}</Text>
-            <Text style={[styles.text, {fontSize: 12}]}>{props.hint}</Text>
+            <Text style={[styles.menuListLabel, {fontWeight: "normal", fontSize: 12}]}>{props.hint}</Text>
           </View>
           <Icon style={styles.menuListIcon} name="chevron-right" size={36}/>
         </View>
@@ -149,7 +149,7 @@ function SettingsForm({ route, navigation }) {
               onPress={() => {
                 navigation.push('Profile')
               }}>
-            <Icon style={[styles.menuListIcon, { color: theme.activeHintColor}]} name="account" size={36}/> 
+            <Icon style={[styles.menuListIcon, { color: theme.profileIcon || "#666" }]} name="account" size={36}/> 
             <Text 
               style={[ styles.textinput, styles.text] }
             >{ account.name }</Text>
@@ -162,7 +162,7 @@ function SettingsForm({ route, navigation }) {
               onPress={() => {
                 navigation.push('Themes')
               }}>
-            <Icon style={[styles.menuListIcon, { color: "red"}]} name="palette" size={36}/> 
+            <Icon style={[styles.menuListIcon, { color: theme.bannerColor }]} name="palette" size={36}/> 
             <Text 
               style={[ styles.textinput, styles.text] }
             >{ theme.name }</Text>
@@ -172,7 +172,7 @@ function SettingsForm({ route, navigation }) {
 
         <Setting 
           icon="cassette" 
-          iconColor="darkorange"
+          iconColor={ theme.voicemailIcon || "darkorange"}
           label="Call Voicemail"
           hint={`${voicemail}`}
           onPress={() => {
@@ -183,7 +183,7 @@ function SettingsForm({ route, navigation }) {
         <Setting 
           icon="share" 
           label="Share number"
-          iconColor="skyblue"
+          iconColor={ theme.shareNumberIcon || "skyblue"}
           hint={`${phone}`}
           onPress={() => {
             SendIntentAndroid.sendText({
@@ -196,8 +196,8 @@ function SettingsForm({ route, navigation }) {
 
         <Setting 
           icon="clock" 
-          iconColor="purple"
-          label="Suspend Jobs"
+          iconColor={ theme.jobTimerIcon || "purple"}
+          label="Manage Timers"
           hint={`${heartbeat}`}
           onPress={() => {
             navigation.navigate("Jobs")

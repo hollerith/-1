@@ -30,7 +30,7 @@ function ThemesForm({ route, navigation }) {
     text: {
       fontSize: 22,
       color: theme.textColor,
-      backgroundColor: theme.textBackgroundColor,
+      backgroundColor: theme.backgroundColor,
       borderColor: theme.borderColor,
       minWidth: 100,
       marginHorizontal: 5,

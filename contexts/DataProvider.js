@@ -71,7 +71,12 @@ const DataProvider = props => {
             let newContacts = []
             incoming.forEach((ct) => {
               console.log(JSON.stringify(ct, null, 4))
-              newContacts.push({id: ct.recordID, name: ct.givenName, phone: ct.phoneNumbers[0].number})
+              newContacts.push({
+                id: ct.recordID, 
+                name: ct.givenName, 
+                phone: ct.phoneNumbers[0].number,
+                notes: JSON.stringify(ct, null, 4)
+              })
             })
             AsyncStorage.setItem("@wzpr:Contacts", JSON.stringify([...contacts, ...newContacts]))
             setLoading(!isLoading)
@@ -93,9 +98,20 @@ const DataProvider = props => {
 
   const checkContact = (contact) => {
     if (contact.checked) {
-      setContacts(merged(contacts, {id: contact.id, name: contact.name, phone: contact.phone }))
+      setContacts(merged(contacts, {
+        id: contact.id, 
+        name: contact.name, 
+        phone: contact.phone,
+        notes: contact.notes
+      }))
     } else {
-      setContacts(merged(contacts, {id: contact.id, name: contact.name, phone: contact.phone, checked: true }))
+      setContacts(merged(contacts, {
+        id: contact.id, 
+        name: contact.name, 
+        phone: contact.phone, 
+        notes: contact.notes, 
+        checked: true 
+      }))
     }
   }
 
@@ -104,7 +120,13 @@ const DataProvider = props => {
     setLoading(!isLoading)
   }
 
+  const deleteJob = (job) => {
+    AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify([...jobs.filter(item => item.id !== job.id)]))
+    setLoading(!isLoading)    
+  }
+
   const saveContact = (contact) => {
+    console.log(contact.notes)
     AsyncStorage.setItem('@wzpr:Contacts', JSON.stringify([...contacts.filter(item => item.id !== contact.id), contact]));
     setLoading(!isLoading)
   }
@@ -169,6 +191,7 @@ const DataProvider = props => {
     jobs,
     setJobs,
     saveJob,
+    deleteJob,
     contacts,
     selected,
     setContacts,

@@ -90,7 +90,7 @@ const AddContactForm = ({ navigation }) => {
         <View style={{ margin: 20 }}/>
         <Button
           style={{ color: theme.selectedColor }}
-          title="Submit"
+          title="Add"
           onPress={onPress}
           disabled={!state.isFormValid}
         />

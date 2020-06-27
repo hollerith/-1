@@ -14,8 +14,8 @@ export default function ContactListScreen ({ navigation }) {
   };
 
   const handleSelectContact = contact => {
-    const { id, name, phone, checked } = contact
-    navigation.push('ContactDetails', { id, name, phone, checked });
+    const { id, name, phone, notes, checked } = contact
+    navigation.push('ContactDetails', { id, name, phone, notes, checked });
   };
 
   const styles = StyleSheet.create({

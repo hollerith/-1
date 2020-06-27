@@ -67,16 +67,15 @@ export default function HomeScreen({ navigation }) {
         },
         headerRight: () => (
           <HeaderButtons HeaderButtonComponent={Masthead}>
-            <Item title="Add" iconName="plus" onPress={() => navigation.push("AddContact")} />
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
               OverflowIcon={<Icon name="account" size={32} color={theme.iconColor} />}
             >
               <HiddenItem title="Add" onPress={() => navigation.push("AddContact") }/>
               <HiddenItem title="Delete" onPress={deleteContacts} />
+              <HiddenItem title="Share" onPress={msgContact} /> 
               <HiddenItem title="Load" onPress={loadData} />
               <HiddenItem title="Sync" onPress={syncData} />
-              <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
             </OverflowMenu>
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
@@ -87,13 +86,12 @@ export default function HomeScreen({ navigation }) {
                 <>
                 <HiddenItem title="Schedule" onPress={scheduleSMS}/>
                 <HiddenItem title="Clear" onPress={reloadContacts} />
-                <HiddenItem title="Share" onPress={msgContact} /> 
                 </> :
                 <>       
                 <HiddenItem title="Schedule" onPress={scheduleSMS} disabled/>
                 <HiddenItem title="Clear" onPress={reloadContacts} disabled />
-                <HiddenItem title="Share" onPress={msgContact} disabled /> 
                 </> }
+                <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
