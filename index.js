@@ -1,14 +1,15 @@
 // Contacts
-import React, { useState, useEffect, useContext } from 'react';
-import { Button, Image, StatusBar, Text, TextInput, View, NativeModules } from "react-native";
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+import React, { useState, useEffect, useContext } from 'react'
+import { Alert, Button, Image, StatusBar, Text, TextInput, View, NativeModules } from "react-native"
+import { NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import { createStackNavigator } from '@react-navigation/stack'
 
-import SettingsScreen from "./screens/SettingsScreen";
-import LoginScreen from "./screens/LoginScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-import HomeScreen from "./screens/HomeScreen";
+import SettingsScreen from "./screens/SettingsScreen"
+import LoginScreen from "./screens/LoginScreen"
+import ProfileScreen from "./screens/ProfileScreen"
+import HomeScreen from "./screens/HomeScreen"
+import JobsScreen from "./screens/JobsScreen"
 
 import AsyncStorage from '@react-native-community/async-storage'
 
@@ -25,9 +26,9 @@ import {
   OverflowMenu, 
   OverflowMenuProvider 
 } from 'react-navigation-header-buttons';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
-import BackgroundTimer from 'react-native-background-timer';
+import BackgroundTimer from 'react-native-background-timer'
 
 // Local datetime adjusted string
 function displayTime() {
@@ -55,10 +56,18 @@ function BottomTabs({ route, navigation }){
           tabBarIcon: ({ focused, color, size }) => {
             size = 32;
             let iconName;
-            if (route.name === 'Home') {
-              iconName = focused ? 'home' : 'home-outline';
-            } else if (route.name === 'Settings') {
-              iconName = 'tune';
+            switch (route.name) {
+              case 'Home':
+                iconName = focused ? 'home' : 'home-outline'
+                break
+              case 'Jobs':
+                iconName = focused ? 'calendar' : 'calendar-outline'
+                break
+              case 'Settings':
+                iconName = 'tune'
+                break
+              default:
+                iconName = 'account'
             }
             return <Icon name={iconName} size={size} color={color} />;
           },
@@ -71,6 +80,7 @@ function BottomTabs({ route, navigation }){
           style: { height: 56 }
         }}>
         <BottomTab.Screen name="Home" component={HomeScreen} />
+        <BottomTab.Screen name="Jobs" component={JobsScreen} />
         <BottomTab.Screen name="Settings" component={SettingsScreen} />
       </BottomTab.Navigator>
     </DataProvider>
@@ -98,55 +108,6 @@ function Main({ route, navigation }){
 
 export default function App() {
 
-  // Fork the background timer to run jobs
-  useEffect(() => {
-    (async () => {
-
-      BackgroundTimer.stopBackgroundTimer() 
-
-      BackgroundTimer.runBackgroundTimer(async () => { 
-
-        const heartbeat = displayTime()
-        AsyncStorage.setItem('@wzpr:Heartbeat', heartbeat)
-
-        const jobs = JSON.parse(await AsyncStorage.getItem("@wzpr:Jobs")) || []
-        console.log(`\x1b[H\x1b[2J\n   \x1b[1m\x1b[33mWZPR Jobs pending :: ${jobs.length}    \x1b[31m\x1b[1m\x1b[5m ❤ \x1b[0m\x1b[34m${heartbeat}\x1b[0m`) 
-        console.log(`\x1b[1m\x1b[33m\n${JSON.stringify(jobs, null, 4)}\x1b[0m`) 
-
-        const backlog = []
-        jobs.forEach((job) => {
-          if ((new Date()) > (new Date(job.schedule)) && !job.disabled) {
-            console.log(`\x1b[34mSending SMS to ${job.to.toString()}\x1b[0m`)
-            DirectSms.sendDirectSms(job.to.toString(), job.text);
-            if (job.repeat != "once") {
-              switch (job.repeat) {
-                case 'month':
-                  date = new Date()
-                  job.schedule = new Date(date.setMonth(date.getMonth()+1));
-                  break;
-                case 'quarter':
-                  job.schedule = new Date(date.setMonth(date.getMonth()+3));
-                  break;
-                case 'year':
-                  job.schedule = new Date(date.setMonth(date.getMonth()+12));
-                  break;
-                default:
-                  job.schedule = addMinutes(new Date(), +job.repeat)
-                  break;
-              }
-              backlog.push(job) // push updated job back on the queue
-            }
-          } else {
-            backlog.push(job)
-          }
-        })
-        AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify(backlog))
-
-      }, 30000);
-
-    })();
-  }, []);
- 
   return (
     <ThemeProvider>
       <UserProvider>

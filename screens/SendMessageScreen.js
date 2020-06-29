@@ -84,17 +84,11 @@ const SendMessageScreen = ({ route, navigation }) => {
       text: state.text, 
       schedule: state.schedule, 
       repeat: state.repeat,
+      action: 'message',
       disabled: false
     }
 
-    console.log(`\x1b[1m\x1b[33mSend SMS\x1b[31m\x1b[1m * \x1b[0m\x1b[34m${state.schedule}\x1b[0m`)
-
     saveJob(Job)
-    //const jobs = JSON.parse(await AsyncStorage.getItem('@wzpr:Jobs')) || []
-    //jobs.push(newJob)
-    //await AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify(jobs))
-    //setJobs(jobs)
-
     navigation.navigate('Jobs')
   };
 

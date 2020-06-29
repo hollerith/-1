@@ -22,8 +22,11 @@ export default function SignUpScreen({route, navigation}) {
   const [password, setPassword] = useState(initialPassword);
 
   const onPress = async () => {
-
     await menu.setIsLoading()
+    changeProfile()
+  }
+
+  const changeProfile = async () => {
 
     if (banner == 'Register') {
       if (oldpass == password) {

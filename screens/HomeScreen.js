@@ -45,7 +45,7 @@ export default function HomeScreen({ navigation }) {
 
   const scheduleSMS = () => { 
     if (selected().length > 0) {
-      navigation.push("SendMessage", selected())
+      navigation.navigate("Schedule", selected())
     } else {
       Alert.alert('Select some contacts to message')
     }
@@ -74,7 +74,7 @@ export default function HomeScreen({ navigation }) {
               <HiddenItem title="Add" onPress={() => navigation.push("AddContact") }/>
               <HiddenItem title="Delete" onPress={deleteContacts} />
               <HiddenItem title="Share" onPress={msgContact} /> 
-              <HiddenItem title="Load" onPress={loadData} />
+              <HiddenItem title="Paste" onPress={loadData} />
               <HiddenItem title="Sync" onPress={syncData} />
             </OverflowMenu>
             <OverflowMenu
@@ -101,7 +101,6 @@ export default function HomeScreen({ navigation }) {
       <HomeStack.Screen name="ContactList" component={ContactListScreen} options={{title: 'Home'}}  />
       <HomeStack.Screen name="ContactDetails" component={ContactDetailsScreen} options={{title: 'Contacts'}} />
       <HomeStack.Screen name="AddContact" component={AddContactScreen} options={{title: 'Add Contact'}} />
-      <HomeStack.Screen name="SendMessage" component={SendMessageScreen} options={{title: 'Send SMS'}} />
     </HomeStack.Navigator>
   );
 }

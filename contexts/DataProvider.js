@@ -1,16 +1,46 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import {Alert, Linking, PermissionsAndroid, NativeModules} from 'react-native'
+import {Alert, Linking, PermissionsAndroid, NativeModules} from "react-native"
 import PropTypes from "prop-types";
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from "@react-native-community/async-storage"
+import Clipboard from "@react-native-community/clipboard"
 import testdata from "../utils/contacts"
-import Contacts from 'react-native-contacts';
-import SendIntentAndroid from 'react-native-send-intent'
+import Contacts from "react-native-contacts"
+import SendIntentAndroid from "react-native-send-intent"
+import BackgroundTimer from 'react-native-background-timer'
+import Sound from 'react-native-sound';
 import { UserContext } from "../contexts/UserProvider"
 
 const DirectSms = NativeModules.DirectSms
 
 const DataContext = createContext();
 const { Provider } = DataContext;
+
+// Local datetime adjusted string
+function displayTime() {
+  const d = new Date()
+  const z = n => n.toString().length == 1 ? `0${n}` : n // Zero pad
+  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`
+}
+
+function addMinutes(date, minutes) { return new Date(date.getTime() + minutes*60000); }
+
+function playSound() {
+  const sound = new Sound('../assets/ThePurge.mp3', null, (error) => {
+    if (error) {
+      console.log(`Error : ${error.message}`)
+      return
+    }
+
+    // play when loaded
+    try {
+      sound.play();
+      Alert.alert('The sound is still playing?')
+      sound.stop();
+    } catch(exception) {
+      console.log(`Exception : ${exception.message}`)
+    }
+  });
+}
 
 const DataProvider = props => {
   const { user, menu } = useContext(UserContext);
@@ -20,11 +50,73 @@ const DataProvider = props => {
   const [contacts, setContacts] = useState({ contacts: [] })
   const [isLoading, setLoading] = useState({ isLoading: false })
 
-  // Runs once!
+  // Fork the background timer to run jobs
   useEffect(() => {
     (async () => {
+
       const data = await AsyncStorage.getItem('@wzpr:Contacts');
       setContacts(JSON.parse(data) || []);
+
+      BackgroundTimer.stopBackgroundTimer()
+      BackgroundTimer.runBackgroundTimer(async () => {
+
+        const heartbeat = displayTime()
+        AsyncStorage.setItem('@wzpr:Heartbeat', heartbeat)
+
+        const jobs = JSON.parse(await AsyncStorage.getItem("@wzpr:Jobs")) || []
+        console.log(`\x1b[H\x1b[2J\n   \x1b[1m\x1b[33mWZPR Jobs pending :: ${jobs.length}    \x1b[31m\x1b[1m\x1b[5m ❤ \x1b[0m\x1b[34m${heartbeat}\x1b[0m`)
+        console.log(`\x1b[1m\x1b[33m\n${JSON.stringify(jobs, null, 4)}\x1b[0m`)
+
+        const backlog = []
+        jobs.forEach((job) => {
+          if ((new Date()) > (new Date(job.schedule)) && !job.disabled) {
+
+            switch (job.action) {
+              case 'message':
+                console.log(`\x1b[34mSending SMS to ${job.to.toString()}\x1b[0m`)
+                DirectSms.sendDirectSms(job.to.toString(), job.text);
+                break;
+              case 'chime':
+                console.log(`\x1b[34mPlay sound \x1b[0m`)
+                playSound()
+                break
+              case 'alert':
+                Alert.alert(job.text)
+                break
+              default:
+                console.log(`\x1b[34m\nLogging :: ${job.schedule} ::\n\x1b[32m ${job.text} \x1b[0m`)
+                break
+            }
+
+            if (job.repeat != "once") {
+              switch (job.repeat) {
+                case 'month':
+                  date = new Date()
+                  job.schedule = new Date(date.setMonth(date.getMonth()+1));
+                  break
+                case 'quarter':
+                  job.schedule = new Date(date.setMonth(date.getMonth()+3));
+                  break
+                case 'year':
+                  job.schedule = new Date(date.setMonth(date.getMonth()+12));
+                  break
+                default:
+                  job.schedule = addMinutes(new Date(), +job.repeat)
+                  break
+              }
+              backlog.push(job) // push updated job back on the queue
+            }
+          } else {
+            backlog.push(job)
+          }
+        })
+
+        if (jobs.length > backlog.length) {
+          AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify(backlog))
+          setLoading(!isLoading);
+        }
+      }, 30000);
+
     })();
   }, []);
 
@@ -35,12 +127,12 @@ const DataProvider = props => {
       if (data !== JSON.stringify(contacts)){
         setContacts(JSON.parse(data) || []);
       }
+
       const beat = await AsyncStorage.getItem('@wzpr:Heartbeat')
       setHeartbeat(beat)
 
       const jobs = JSON.parse(await AsyncStorage.getItem('@wzpr:Jobs') || [])
       setJobs(jobs)
-
     })();
   }, [isLoading]);
 
@@ -87,8 +179,9 @@ const DataProvider = props => {
   }
 
   const loadData = async () => {
-    setContacts(testdata)
-    const status = await AsyncStorage.setItem("@wzpr:Contacts", JSON.stringify(testdata));
+    const data = JSON.parse(await Clipboard.getString())
+    setContacts(data)
+    const status = await AsyncStorage.setItem("@wzpr:Contacts", JSON.stringify(data));
     setLoading(!isLoading);
   }
 
@@ -147,7 +240,7 @@ const DataProvider = props => {
   const msgContact = (contact) => {
     SendIntentAndroid.sendText({
       title: "Please share this text",
-      text: JSON.stringify((contacts.filter(i => i.checked) === [] ? contacts : contacts.filter(i => i.checked)), null, 4),
+      text: JSON.stringify((contacts.filter(i => i.checked).length === 0 ? contacts : contacts.filter(i => i.checked)), null, 4),
       type: SendIntentAndroid.TEXT_PLAIN,
     });
   }

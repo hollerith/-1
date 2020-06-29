@@ -21,7 +21,6 @@ import { UserContext } from "../contexts/UserProvider"
 
 import SettingsForm from "../components/SettingsForm"
 import ProfileScreen from "../screens/ProfileScreen"
-import JobListScreen from "../screens/JobListScreen"
 import ThemesForm from "../components/SelectTheme"
 
 import { LogoTitle, SplashScreen, Masthead } from "../components"
@@ -45,8 +44,7 @@ export default function SettingsScreen({ navigation }) {
   const onProfile = () => { navigation.push('Profile') };
   const onThemes = () => { navigation.push('Themes') };
   const onJobs = () => { 
-    console.log('Jobs')
-    navigation.push('Jobs') 
+    navigation.push('Jobs')
   };
 
   return (
@@ -68,10 +66,10 @@ export default function SettingsScreen({ navigation }) {
               style={{ marginHorizontal: 10 }}
               OverflowIcon={<Icon name="menu" size={32} color={ theme.iconColor } />}
             >
-              <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
               <HiddenItem title="Profile" onPress={onProfile} />
               <HiddenItem title="Themes" onPress={onThemes} />
               <HiddenItem title="Jobs" onPress={onJobs} />
+              <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
@@ -81,7 +79,6 @@ export default function SettingsScreen({ navigation }) {
       <Stack.Screen name="Settings" component={SettingsForm} options={{title: 'Settings'}} />
       <Stack.Screen name="Themes" component={ThemesForm} options={{title: 'Themes'}} />
       <Stack.Screen name="Profile" component={ProfileScreen} initialParams={{ banner: "Profile"}} options={{title: 'Profile'}} />
-      <Stack.Screen name="Jobs" component={JobListScreen} options={{title: 'Jobs'}} />
     </Stack.Navigator>
   );
 }
