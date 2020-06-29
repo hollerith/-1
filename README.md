@@ -6,17 +6,19 @@
 
 **features**
 
-1. sync
+a. sync
   1. sync with phone contacts (read-only)
   2. paste lists of contacts 
-2. opsec 
+  
+b. opsec 
   1. security via obscurity
   2. doesn't integrate with phone contact permissions i.e. share to other apps
   3. password entry
   4. emergency data wipe 
   5. schedule sms messages/sounds 
   6. no trace sending of sms
-4. UX   
+  
+c. UX   
   1. multiple sick themes/dark mode
   2. very simple UI, minimize typing
   3. works iOS/Android
