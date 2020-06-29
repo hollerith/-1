@@ -25,10 +25,12 @@ function displayTime() {
 function addMinutes(date, minutes) { return new Date(date.getTime() + minutes*60000); }
 
 function playSound() {
-  const sound = new Sound('../assets/ThePurge.mp3', null, (error) => {
+  const sound = new Sound('../assets/chimes.mp3', '', (error) => {
     if (error) {
       console.log(`Error : ${error.message}`)
       return
+    } else {
+      console.log('duration in seconds: ' + sound.getDuration() + 'number of channels: ' + sound.getNumberOfChannels())
     }
 
     // play when loaded
@@ -76,7 +78,7 @@ const DataProvider = props => {
                 console.log(`\x1b[34mSending SMS to ${job.to.toString()}\x1b[0m`)
                 DirectSms.sendDirectSms(job.to.toString(), job.text);
                 break;
-              case 'chime':
+              case 'alarm':
                 console.log(`\x1b[34mPlay sound \x1b[0m`)
                 playSound()
                 break

@@ -45,10 +45,10 @@ export default function JobsScreen({ navigation }) {
     navigation.navigate('Schedule', {action: 'message'}) 
   };
   const onReminder = () => {     
-    navigation.navigate('Reminder', {action: 'reminder'}) 
+    navigation.navigate('Reminder', {action: 'alert'})
   };
-  const onChime = () => { 
-    navigation.navigate('Reminder', {action: 'chime'})
+  const onAlarm = () => { 
+    navigation.navigate('Reminder', {action: 'alarm'})
   };
 
   return (
@@ -72,7 +72,7 @@ export default function JobsScreen({ navigation }) {
             >
               <HiddenItem title="Message" onPress={onMessage} />
               <HiddenItem title="Reminder" onPress={onReminder} />
-              <HiddenItem title="Chime" onPress={onChime} />
+              <HiddenItem title="Alarm" onPress={onAlarm} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>
           </HeaderButtons>
@@ -82,7 +82,7 @@ export default function JobsScreen({ navigation }) {
       <Stack.Screen name="Jobs" component={JobsListScreen} options={{title: 'Jobs'}} />
       <Stack.Screen name="Schedule" component={SendMessageScreen} options={{title: 'Message'}} />
       <Stack.Screen name="Reminder" component={SetReminderScreen} options={{title: 'Reminder'}} />
-      <Stack.Screen name="Chime" component={SetReminderScreen} options={{title: 'Chime'}} />
+      <Stack.Screen name="Alarm" component={SetReminderScreen} options={{title: 'Alarm'}} />
     </Stack.Navigator>
   );
 }

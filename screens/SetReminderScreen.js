@@ -171,7 +171,7 @@ const SetReminderScreen = ({ route, navigation }) => {
         <View style={{ margin: 5 }}/>
         <View style={{flexDirection: 'row', justifyContent: 'space-between'}} >
           <Button
-            title={ action == 'reminder' ? "Set Reminder" : "Set alarm" }
+            title={ action == 'alert' ? "Set Reminder" : "Set alarm" }
             onPress={onSave}
             disabled={!isValid}
           />

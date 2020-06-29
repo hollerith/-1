@@ -17,6 +17,8 @@ import { UserProvider, UserContext } from "./contexts/UserProvider"
 import { ThemeProvider, ThemeContext } from "./contexts/ThemeProvider"
 import { DataProvider } from "./contexts/DataProvider"
 
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
+
 import { LogoTitle, SplashScreen } from "./components"
 import { 
   HeaderButtons, 
@@ -26,20 +28,6 @@ import {
   OverflowMenu, 
   OverflowMenuProvider 
 } from 'react-navigation-header-buttons';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons"
-
-import BackgroundTimer from 'react-native-background-timer'
-
-// Local datetime adjusted string
-function displayTime() {
-  const d = new Date()
-  const z = n => n.toString().length == 1 ? `0${n}` : n // Zero pad
-  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}`
-}
-
-function addMinutes(date, minutes) { return new Date(date.getTime() + minutes*60000); }
-
-const DirectSms = NativeModules.DirectSms
 
 const Stack = createStackNavigator()
 const HomeStack = createStackNavigator();

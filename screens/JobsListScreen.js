@@ -71,7 +71,7 @@ export default function JobsListScreen ({ navigation }) {
           onPress={() => onToggle(job)}>
           <Icon name={ 
             job.action == 'message' ? "email-outline" : 
-            job.action == 'reminder' ? "clock-outline" : "bell-outline" }
+            job.action == 'alert' ? "clock-outline" : "bell-outline" }
             color={ job.disabled ? theme.inactiveTintColor || "lightgrey" : theme.jobTimerIcon || "purple" }
             size={36}/>
         </TouchableOpacity>
