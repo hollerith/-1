@@ -1,24 +1,26 @@
 # wzpr
 
-react-native app boilerplate / starter
-fonts and other manually linked stuff -> rename with react-native-rename
+[![Build Status](https://img.shields.io/static/v1.svg?label=CSL&message=software%20against%20climate%20change&color=green?style=flat&logo=github)](https://img.shields.io/static/v1.svg?label=CSL&message=software%20against%20climate%20change&color=green?style=flat&logo=github)
 
-goals; 
+## basic secure contact app
 
-moving the mapbox application from react 0.60 
-upgrade react-navigation v4 -> v5 react-navigation 
-decoupled authentication, add expressjs OAuth provider for test (heroku)
-try out new form frameworks / themes
+**features**
 
-overall must prefer; 
+1. sync
+  1. sync with phone contacts (read-only)
+  2. paste lists of contacts 
+2. opsec 
+  1. security via obscurity
+  2. doesn't integrate with phone contact permissions i.e. share to other apps
+  3. password entry
+  4. emergency data wipe 
+  5. schedule sms messages/sounds 
+  6. no trace sending of sms
+4. UX   
+  1. multiple sick themes/dark mode
+  2. very simple UI, minimize typing
+  3. works iOS/Android
 
-functions instead of classes (where new)
-test context is tolerable over Redux
-test websockets api
+**use case**
 
-
-
-
-
-
-
+You are a field officer, activist or just someone in an abusive relationship who cannot allow someone with access to your phone to see your contacts and read your messages. 
