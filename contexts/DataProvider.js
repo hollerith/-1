@@ -25,19 +25,17 @@ function displayTime() {
 function addMinutes(date, minutes) { return new Date(date.getTime() + minutes*60000); }
 
 function playSound() {
-  const sound = new Sound('../assets/chimes.mp3', '', (error) => {
+  const sound = new Sound('chimes.mp3', Sound.MAIN_BUNDLE, (error) => {
     if (error) {
       console.log(`Error : ${error.message}`)
       return
     } else {
-      console.log('duration in seconds: ' + sound.getDuration() + 'number of channels: ' + sound.getNumberOfChannels())
+      console.log('duration in seconds: ' + sound.getDuration() + ' number of channels: ' + sound.getNumberOfChannels())
     }
 
     // play when loaded
     try {
       sound.play();
-      Alert.alert('The sound is still playing?')
-      sound.stop();
     } catch(exception) {
       console.log(`Exception : ${exception.message}`)
     }
