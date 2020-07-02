@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from "react";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-community/async-storage';
-import { Picker } from '@react-native-community/picker';
-import { ThemeContext } from "../contexts/ThemeProvider";
-import { DataContext } from "../contexts/DataProvider";
+import React, { useState, useEffect, useContext } from "react"
+import DateTimePicker from '@react-native-community/datetimepicker'
+import AsyncStorage from '@react-native-community/async-storage'
+import { Picker } from '@react-native-community/picker'
+import { ThemeContext } from "../contexts/ThemeProvider"
+import { DataContext } from "../contexts/DataProvider"
 import {
   Button,
   ScrollView,
@@ -14,7 +14,7 @@ import {
   View,
   Platform,
   PermissionsAndroid
-} from 'react-native';
+} from 'react-native'
 
 const displayDate = (d) => {
   const z = n => n.toString().length == 1 ? `0${n}` : n // Zero pad
@@ -66,7 +66,7 @@ const SetReminderScreen = ({ route, navigation }) => {
       text: state.text, 
       schedule: state.schedule, 
       repeat: state.repeat,
-      action: action,
+      action: action || job.action,
       disabled: false
     }
 

@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import React, { useState, useEffect, useContext } from 'react'
+import { createStackNavigator } from '@react-navigation/stack'
 
-import { Alert, Button, Image, StatusBar, Text, TextInput, View } from "react-native";
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { Alert, Button, Image, StatusBar, Text, TextInput, View } from "react-native"
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
-import AddContactScreen from "./AddContactScreen";
-import ContactListScreen from "./ContactListScreen";
-import ContactDetailsScreen from "./ContactDetailsScreen";
-import SendMessageScreen from "./SendMessageScreen";
+import AddContactScreen from "./AddContactScreen"
+import ContactListScreen from "./ContactListScreen"
+import ContactDetailsScreen from "./ContactDetailsScreen"
+import SendMessageScreen from "./SendMessageScreen"
 
-import { LogoTitle, SplashScreen, Masthead } from "../components"
 import { UserContext } from "../contexts/UserProvider"
 import { DataContext } from "../contexts/DataProvider"
 import { ThemeContext } from "../contexts/ThemeProvider"
 
+import { LogoTitle, SplashScreen, Masthead } from "../components"
 import { 
   HeaderButtons, 
   HeaderButton, 
@@ -21,7 +21,7 @@ import {
   HiddenItem, 
   OverflowMenu, 
   OverflowMenuProvider 
-} from 'react-navigation-header-buttons';
+} from 'react-navigation-header-buttons'
 
 const HomeStack = createStackNavigator();
 
@@ -43,9 +43,19 @@ export default function HomeScreen({ navigation }) {
     msgContact 
   } = useContext(DataContext);
 
+  const editContact = () => {
+    if (selected().length > 0) {
+      const { id, name, phone, notes, checked } = contacts.filter(item => item.id == selected()[0])[0]
+      navigation.push('ContactDetails', { id, name, phone, notes, checked })
+    } else {
+      Alert.alert('Select some contact to edit')
+    }    
+  }
+
   const scheduleSMS = () => { 
     if (selected().length > 0) {
-      navigation.navigate("Schedule", selected())
+      navigation.navigate('Alerts', { screen: 'Schedule', params: selected()})
+      //navigation.navigate("Schedule", selected())
     } else {
       Alert.alert('Select some contacts to message')
     }
@@ -72,16 +82,25 @@ export default function HomeScreen({ navigation }) {
               OverflowIcon={<Icon name="account" size={32} color={theme.iconColor} />}
             >
               <HiddenItem title="Add" onPress={() => navigation.push("AddContact") }/>
-              <HiddenItem title="Delete" onPress={deleteContacts} />
-              <HiddenItem title="Share" onPress={msgContact} /> 
-              <HiddenItem title="Paste" onPress={loadData} />
-              <HiddenItem title="Sync" onPress={syncData} />
+              { selected().length > 0 ? 
+                <>
+                <HiddenItem title="Edit" onPress={editContact} />
+                <HiddenItem title="Delete" onPress={deleteContacts} />
+                <HiddenItem title="Share" onPress={msgContact} /> 
+                </> :
+                <>       
+                <HiddenItem title="Edit" onPress={editContact} disabled />
+                <HiddenItem title="Delete" onPress={deleteContacts} disabled />
+                <HiddenItem title="Share" onPress={msgContact} disabled /> 
+                </> }
+              <HiddenItem title="Text" onPress={smsContacts} />
             </OverflowMenu>
             <OverflowMenu
               style={{ marginHorizontal: 10 }}
               OverflowIcon={<Icon name="menu" size={32} color={theme.iconColor} />}
             >
-              <HiddenItem title="Text" onPress={smsContacts} />
+              <HiddenItem title="Paste" onPress={loadData} />
+              <HiddenItem title="Sync" onPress={syncData} />
               { selected().length > 0 ? 
                 <>
                 <HiddenItem title="Schedule" onPress={scheduleSMS}/>
@@ -102,5 +121,5 @@ export default function HomeScreen({ navigation }) {
       <HomeStack.Screen name="ContactDetails" component={ContactDetailsScreen} options={{title: 'Contacts'}} />
       <HomeStack.Screen name="AddContact" component={AddContactScreen} options={{title: 'Add Contact'}} />
     </HomeStack.Navigator>
-  );
+  )
 }

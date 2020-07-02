@@ -1,12 +1,12 @@
-import React, { useContext } from 'react';
-import { Button, FlatList, Text, SafeAreaView, TouchableOpacity, StyleSheet, View } from 'react-native';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import React, { useContext } from 'react'
+import { Button, FlatList, Text, SafeAreaView, TouchableOpacity, StyleSheet, View } from 'react-native'
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
-import BackgroundTimer from 'react-native-background-timer';
-import AsyncStorage from '@react-native-community/async-storage';
+import BackgroundTimer from 'react-native-background-timer'
+import AsyncStorage from '@react-native-community/async-storage'
 
 import { LogoTitle, SplashScreen, Masthead } from "../components"
-import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons';
+import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons'
 
 import { UserContext } from "../contexts/UserProvider"
 import { DataContext } from "../contexts/DataProvider"
@@ -14,9 +14,9 @@ import { ThemeContext } from "../contexts/ThemeProvider"
 
 export default function JobsListScreen ({ navigation }) {
 
-  const { jobs, setJobs, saveJob, deleteJob } = useContext(DataContext);
+  const { jobs, setJobs, saveJob, deleteJob } = useContext(DataContext)
   const { theme } = useContext(ThemeContext)
-  const { isSignout } = useContext(UserContext);
+  const { isSignout } = useContext(UserContext)
 
   const styles = StyleSheet.create({
     container: {
@@ -80,7 +80,7 @@ export default function JobsListScreen ({ navigation }) {
           onPress={() => onDetail(job)}>
           <View>
             { job.action == 'message' ? 
-              <Text style={[styles.text, { fontWeight: "bold"}]}>{job.to.toString()}</Text> : null }
+              <Text style={[styles.text, { fontWeight: "bold"}]}>{job.name.toString() || job.to.toString()}</Text> : null }
             <Text style={styles.text}>{job.text}</Text>
           </View>
         </TouchableOpacity>
@@ -96,17 +96,13 @@ export default function JobsListScreen ({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={ styles.banner }>
-        Jobs
+        Alerts
       </Text> 
       <FlatList
         data={jobs}
         renderItem={({ item, index }) => <Item job={item} index={index}/>}
         keyExtractor={item => item.id}
       />
-      <View
-        style={{ padding: 20 }}>
-        <Button title='Suspend All' onPress={() => BackgroundTimer.stopBackgroundTimer() } />
-      </View>
     </SafeAreaView>
   )
 }

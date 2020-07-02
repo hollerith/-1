@@ -96,7 +96,7 @@ export default function ContactDetailsScreen({ route, navigation }) {
           <HiddenItem title="Text" onPress={onPressText} />
           <HiddenItem title="Schedule" onPress={onPressSMS} />
           <HiddenItem title="Delete" onPress={onPressDelete} />
-          <HiddenItem title="SignOut" onPress={onPressSignOut} />
+          <HiddenItem title="Sign Out" onPress={onPressSignOut} />
         </OverflowMenu>
       </HeaderButtons>
     ),

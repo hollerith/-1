@@ -27,17 +27,15 @@ function addMinutes(date, minutes) { return new Date(date.getTime() + minutes*60
 function playSound() {
   const sound = new Sound('chimes.mp3', Sound.MAIN_BUNDLE, (error) => {
     if (error) {
-      console.log(`Error : ${error.message}`)
+      console.error(`Error : ${error.message}`)
       return
-    } else {
-      console.log('duration in seconds: ' + sound.getDuration() + ' number of channels: ' + sound.getNumberOfChannels())
     }
 
     // play when loaded
     try {
       sound.play();
     } catch(exception) {
-      console.log(`Exception : ${exception.message}`)
+      console.error(`Exception : ${exception.message}`)
     }
   });
 }
@@ -64,8 +62,8 @@ const DataProvider = props => {
         AsyncStorage.setItem('@wzpr:Heartbeat', heartbeat)
 
         const jobs = JSON.parse(await AsyncStorage.getItem("@wzpr:Jobs")) || []
-        console.log(`\x1b[H\x1b[2J\n   \x1b[1m\x1b[33mWZPR Jobs pending :: ${jobs.length}    \x1b[31m\x1b[1m\x1b[5m ❤ \x1b[0m\x1b[34m${heartbeat}\x1b[0m`)
-        console.log(`\x1b[1m\x1b[33m\n${JSON.stringify(jobs, null, 4)}\x1b[0m`)
+        //console.log(`\x1b[H\x1b[2J\n   \x1b[1m\x1b[33mWZPR Jobs pending :: ${jobs.length}    \x1b[31m\x1b[1m\x1b[5m ❤ \x1b[0m\x1b[34m${heartbeat}\x1b[0m`)
+        //console.log(`\x1b[1m\x1b[33m\n${JSON.stringify(jobs, null, 4)}\x1b[0m`)
 
         const backlog = []
         jobs.forEach((job) => {
@@ -73,18 +71,16 @@ const DataProvider = props => {
 
             switch (job.action) {
               case 'message':
-                console.log(`\x1b[34mSending SMS to ${job.to.toString()}\x1b[0m`)
                 DirectSms.sendDirectSms(job.to.toString(), job.text);
                 break;
               case 'alarm':
-                console.log(`\x1b[34mPlay sound \x1b[0m`)
                 playSound()
                 break
               case 'alert':
                 Alert.alert(job.text)
                 break
               default:
-                console.log(`\x1b[34m\nLogging :: ${job.schedule} ::\n\x1b[32m ${job.text} \x1b[0m`)
+                //console.log(`\x1b[34m\nLogging :: ${job.schedule} ::\n\x1b[32m ${job.text} \x1b[0m`)
                 break
             }
 
@@ -111,10 +107,9 @@ const DataProvider = props => {
           }
         })
 
-        if (jobs.length > backlog.length) {
-          AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify(backlog))
-          setLoading(!isLoading);
-        }
+        AsyncStorage.setItem('@wzpr:Jobs', JSON.stringify(backlog))
+        setLoading(!isLoading)
+
       }, 30000);
 
     })();
@@ -162,7 +157,6 @@ const DataProvider = props => {
             // contacts returned in Array
             let newContacts = []
             incoming.forEach((ct) => {
-              console.log(JSON.stringify(ct, null, 4))
               newContacts.push({
                 id: ct.recordID, 
                 name: ct.givenName, 
@@ -219,7 +213,6 @@ const DataProvider = props => {
   }
 
   const saveContact = (contact) => {
-    console.log(contact.notes)
     AsyncStorage.setItem('@wzpr:Contacts', JSON.stringify([...contacts.filter(item => item.id !== contact.id), contact]));
     setLoading(!isLoading)
   }

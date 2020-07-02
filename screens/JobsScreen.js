@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import AsyncStorage from '@react-native-community/async-storage';
+import React, { useState, useEffect, useContext } from 'react'
+import { createStackNavigator } from '@react-navigation/stack'
+import AsyncStorage from '@react-native-community/async-storage'
 import SendIntentAndroid from 'react-native-send-intent'
 import Clipboard from "@react-native-community/clipboard"
 import { 
@@ -24,7 +24,7 @@ import SendMessageScreen from "../screens/SendMessageScreen"
 import SetReminderScreen from "../screens/SetReminderScreen"
 
 import { LogoTitle, SplashScreen, Masthead } from "../components"
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 import {
   HeaderButtons,
   HeaderButton,
@@ -32,7 +32,7 @@ import {
   HiddenItem,
   OverflowMenu,
   OverflowMenuProvider
-} from 'react-navigation-header-buttons';
+} from 'react-navigation-header-buttons'
 
 const Stack = createStackNavigator();
 

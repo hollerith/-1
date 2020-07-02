@@ -48,8 +48,8 @@ function BottomTabs({ route, navigation }){
               case 'Home':
                 iconName = focused ? 'home' : 'home-outline'
                 break
-              case 'Jobs':
-                iconName = focused ? 'calendar' : 'calendar-outline'
+              case 'Alerts':
+                iconName = focused ? 'clock' : 'clock-outline'
                 break
               case 'Settings':
                 iconName = 'tune'
@@ -68,7 +68,7 @@ function BottomTabs({ route, navigation }){
           style: { height: 56 }
         }}>
         <BottomTab.Screen name="Home" component={HomeScreen} />
-        <BottomTab.Screen name="Jobs" component={JobsScreen} />
+        <BottomTab.Screen name="Alerts" component={JobsScreen} />
         <BottomTab.Screen name="Settings" component={SettingsScreen} />
       </BottomTab.Navigator>
     </DataProvider>

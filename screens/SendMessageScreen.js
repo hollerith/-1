@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useContext } from "react";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import AsyncStorage from '@react-native-community/async-storage';
-import { Picker } from '@react-native-community/picker';
-import { ThemeContext } from "../contexts/ThemeProvider";
-import { DataContext } from "../contexts/DataProvider";
+import React, { useState, useEffect, useContext } from "react"
+import DateTimePicker from '@react-native-community/datetimepicker'
+import AsyncStorage from '@react-native-community/async-storage'
+
+import { Picker } from '@react-native-community/picker'
+import { ThemeContext } from "../contexts/ThemeProvider"
+import { DataContext } from "../contexts/DataProvider"
 import {
   Button,
+  KeyboardAvoidingView,
   ScrollView,
   StyleSheet,
   TextInput,
@@ -14,7 +16,7 @@ import {
   View,
   Platform,
   PermissionsAndroid
-} from 'react-native';
+} from 'react-native'
 
 const displayDate = (d) => {
   const z = n => n.toString().length == 1 ? `0${n}` : n // Zero pad
@@ -38,6 +40,7 @@ const SendMessageScreen = ({ route, navigation }) => {
 
   const [state, setState] = useState({
     to: job ? job.to : phone ? phone : contacts.filter(i => i.checked ).map(i => i.phone),
+    name: job ? job.name : name ? name : contacts.filter(i => i.checked ).map(i => i.name),
     text: job ? job.text : "",
     schedule: job ? new Date(job.schedule) : addMinutes(new Date(), 5),
     repeat: job ? job.repeat : "once",
@@ -81,6 +84,7 @@ const SendMessageScreen = ({ route, navigation }) => {
     const Job = { 
       id: job ? job.id : new Date().getTime().toString(), 
       to: state.to, 
+      name: state.name, 
       text: state.text, 
       schedule: state.schedule, 
       repeat: state.repeat,
@@ -130,8 +134,8 @@ const SendMessageScreen = ({ route, navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={{ padding: 20 }}>
-        <Text style={styles.textinput}>{state.to.toString()}</Text>
+      <KeyboardAvoidingView behavior={Platform.OS == "ios" ? "padding" : "height"} style={{ padding: 20 }}>
+        <Text style={styles.textinput}>{state.name.toString() || state.to.toString()}</Text>
         <TextInput
           style={[ styles.textinput, { 
             textAlign: "center", 
@@ -200,7 +204,7 @@ const SendMessageScreen = ({ route, navigation }) => {
             disabled={!isLaterValid}
           />
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 };

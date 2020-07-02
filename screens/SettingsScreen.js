@@ -43,9 +43,6 @@ export default function SettingsScreen({ navigation }) {
 
   const onProfile = () => { navigation.push('Profile') };
   const onThemes = () => { navigation.push('Themes') };
-  const onJobs = () => { 
-    navigation.push('Jobs')
-  };
 
   return (
     <Stack.Navigator
@@ -68,7 +65,6 @@ export default function SettingsScreen({ navigation }) {
             >
               <HiddenItem title="Profile" onPress={onProfile} />
               <HiddenItem title="Themes" onPress={onThemes} />
-              <HiddenItem title="Jobs" onPress={onJobs} />
               <HiddenItem title="Wipe" onPress={() => { buncoSquad(); menu.signOut() }} />
               <HiddenItem title="Sign Out" onPress={menu.signOut} />
             </OverflowMenu>

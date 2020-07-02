@@ -50,7 +50,7 @@ themes = [
     profileColor: "#666",
     voicemailColor: "darkorange",
     sharePhoneColor: "skyblue",
-    jobTimerColor: "purple",
+    jobTimerColor: "pink",
   },
   { 
     name: "BananaRepublic",

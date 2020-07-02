@@ -51,6 +51,14 @@ const UserProvider = props => {
             ...prevState,
             isLoading: false,
             username: action.username,
+            userToken: null,
+          }
+        case 'FAIL_LOGIN':
+          return {
+            ...prevState,
+            isLoading: false,
+            username: action.username,
+            userToken: null,
           }
         case 'IS_LOADING':
           return {
@@ -102,13 +110,14 @@ const UserProvider = props => {
           dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', username: account.login });
         } else {
           Alert.alert('Wrong user or bad password')
+          dispatch({ type: 'FAIL_LOGIN', username: account.login });
         }
       },
       setIsLoading: () => {
         dispatch({ type: 'IS_LOADING' });
       },
       signOut: async () => {
-        await AsyncStorage.removeItem("userToken");
+        await AsyncStorage.removeItem("@wzpr:userToken");
         dispatch({ type: 'SIGN_OUT' });
       },
       signUp: async input => {
@@ -116,7 +125,9 @@ const UserProvider = props => {
           const salt = bcrypt.genSaltSync(10);
           const hash = bcrypt.hashSync(input.password, salt);
           dispatch({ type: 'SIGN_UP', username: input.username });
-          await AsyncStorage.setItem("@wzpr:account", JSON.stringify({ login: input.username, userhash: hash}));
+          await AsyncStorage.setItem("@wzpr:account", JSON.stringify({ login: input.username, userhash: hash}))
+          await AsyncStorage.setItem('@wzpr:Contacts', "[]")
+          await AsyncStorage.setItem('@wzpr:Jobs', "[]")
           dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token', username: input.username });
         } else {
           Alert.alert(`Passwords don\'t match:\n`)

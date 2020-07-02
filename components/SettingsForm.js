@@ -197,10 +197,10 @@ function SettingsForm({ route, navigation }) {
         <Setting 
           icon="clock" 
           iconColor={ theme.jobTimerIcon || "purple"}
-          label="Manage Timers"
+          label="Stop Alarms"
           hint={`${heartbeat}`}
           onPress={() => {
-            navigation.navigate("Jobs")
+            BackgroundTimer.stopBackgroundTimer()
           }}          
         />
 

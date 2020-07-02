@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Alert, Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native";
+import React, { useState, useEffect, useContext } from 'react'
+import { Alert, Button, ScrollView, StyleSheet, View, Text, TextInput } from "react-native"
 
 import { LogoTitle, SplashScreen, Masthead } from "../components"
-import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons';
-import Icon from "react-native-vector-icons/MaterialCommunityIcons";
+import { HeaderButtons, HeaderButton, Item, HiddenItem, OverflowMenu } from 'react-navigation-header-buttons'
+import Icon from "react-native-vector-icons/MaterialCommunityIcons"
 
 import { ThemeContext } from "../contexts/ThemeProvider"
 import { UserContext } from "../contexts/UserProvider"
@@ -15,9 +15,9 @@ export default function SignUpScreen({route, navigation}) {
   const { theme } = useContext(ThemeContext)
   const { user, menu } = useContext(UserContext)
 
-  const initialPassword = ( banner == "Register" ? "P455w0rd." : "")
+  const initialPassword = ( banner == "Register" ? "supersecretpassword" : "")
 
-  const [username, setUsername] = useState(( banner == "Register" ? "" : user.username))
+  const [username, setUsername] = useState(( banner == "Register" ? "changeme" : user.username))
   const [oldpass, setOldPass] = useState(initialPassword);
   const [password, setPassword] = useState(initialPassword);
 
